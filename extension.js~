@@ -63,6 +63,7 @@ DoIt.prototype = {
         //fahrenheit
         item.addActor(new St.Label({ text:content, style_class: "sm-label"}));
         section.addMenuItem(item);
+
         this.updateActor(this.statusLabel);
     }
 }
