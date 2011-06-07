@@ -41,8 +41,8 @@ DoIt.prototype = {
             let c=0;
             if(temperature[0]){
                 c = parseInt(temperature[1])/1000;
-		title=c.toString()+" C";
-                content=c.toString()+" C / "+((9/5)*c+32).toFixed(1).toString()+" F";
+		title=c.toString()+"\u1d3cC";
+                content=c.toString()+"\u1d3cC / "+((9/5)*c+32).toFixed(1).toString()+"\u1d3cF";
             }
 	}
         else{
