@@ -33,23 +33,25 @@ DoIt.prototype = {
     },
 	
     _update_temp: function(){
-	let f1='/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp';
-	let title='';
-	let content='';
-	if(GLib.file_test(f1,1<<4)){
-            let temperature = GLib.file_get_contents(f1);
-            let c=0;
+	let title='Error';
+	let content='Could not read temperature from your system, please report!';
+        let f = new Array();
+        f[1]='/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp';
+        f[2]='/sys/devices/virtual/thermal/thermal_zone0/temp';
+        let c=0;
+        let temperature;
+        for (let i=1;i<=2;i++){
+	if(GLib.file_test(f[i],1<<4)){
+            temperature = GLib.file_get_contents(f[i]);
             if(temperature[0]){
                 c = parseInt(temperature[1])/1000;
 		title=c.toString()+"\u1d3cC";
                 content=c.toString()+"\u1d3cC / "+((9/5)*c+32).toFixed(1).toString()+"\u1d3cF";
+                continue;
             }
 	}
-        else{
-            title='Error';
-            content='Could not read temperature from your system, please report!'
-        }
-
+        
+}
         this.statusLabel = new St.Label({
             text: (title)
         });
