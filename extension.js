@@ -38,6 +38,7 @@ DoIt.prototype = {
         let f = new Array();
         f[1]='/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp';
         f[2]='/sys/devices/virtual/thermal/thermal_zone0/temp';
+        f[3]='/sys/bus/acpi/drivers/ATK0110/ATK0110:00/hwmon/hwmon0/temp1_input';
         let c=0;
         let temperature;
         for (let i=1;i<=2;i++){
