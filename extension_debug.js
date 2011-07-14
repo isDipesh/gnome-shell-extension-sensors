@@ -78,7 +78,9 @@ DoIt.prototype = {
             if(s){
                 let senses = GLib.spawn_command_line_sync(s);
                 if(senses[0]){
+                    debug(senses[1]);
                     let temp=findTemperatureFromSensorsOutput(senses[1]);
+                    debug (toFahrenheit(temp));
                     title=getTitle(temp);
                     content=getContent(temp);
                     command=["echo"];
@@ -111,6 +113,10 @@ DoIt.prototype = {
     }
 }
 
+function debug(a){
+    Util.spawn(['echo',a]);
+}
+
 function findTemperatureFromSensorsOutput(text){
     let senses_lines=text.split("\n");
     let line = '';
@@ -125,6 +131,7 @@ function findTemperatureFromSensorsOutput(text){
             let c=0;
             switch (type){
                 case 'Virtual device':
+                    debug('HIT : '+type);
                     //starting from the next line, loop, also increase the outer line counter i
                     for (var j=i+1;;j++,i++){
                         //continue only if line exists and isn't adapter
@@ -143,6 +150,7 @@ function findTemperatureFromSensorsOutput(text){
                     
                     break;
                 case 'ACPI interface':
+                    debug('HIT : '+type);
                     //starting from the next line, loop, also increase the outer line counter i
                     for (var j=i+1;;j++,i++){
                         //continue only if line exists and isn't adapter
@@ -159,6 +167,7 @@ function findTemperatureFromSensorsOutput(text){
                     }
                     break;
                 case 'ISA adapter':
+                    debug('HIT : '+type);
                     //starting from the next line, loop, also increase the outer line counter i
                     for (var j=i+1;;j++,i++){
                         //continue only if line exists and isn't adapter
@@ -173,6 +182,7 @@ function findTemperatureFromSensorsOutput(text){
                     }
                     break;
                 default:
+                    debug('MISS : '+type);
                     break;
             }
             if (c==1) break;
