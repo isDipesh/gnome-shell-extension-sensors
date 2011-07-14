@@ -50,18 +50,15 @@ DoIt.prototype = {
         let temperature;
         for (let i=0;i<f.length;i++){
             if(GLib.file_test(f[i],1<<4)){
-
                 temperature = GLib.file_get_contents(f[i]);
                 if(temperature[0]){
-
-
                     c = parseInt(temperature[1])/1000;
                     title=getTitle(c);
                     content=getContent(c);
                     command=["echo"];
                     d=1;
-                    continue;
-                }
+                    }
+		if (d) break;
             }
 
         }
