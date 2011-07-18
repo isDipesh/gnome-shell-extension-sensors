@@ -41,11 +41,17 @@ DoIt.prototype = {
 	let command=["firefox","http://github.com/xtranophilist/gnome-shell-extension-cpu-temperature/issues/"];
         let d=0;
         let f = new Array();
-        f[0]='/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp';
-        f[1]='/sys/devices/virtual/thermal/thermal_zone0/temp';
-        f[2]='/sys/bus/acpi/drivers/ATK0110/ATK0110:00/hwmon/hwmon0/temp1_input';
-	f[3]='/sys/devices/platform/coretemp.0/temp1_input';
-	f[4]='/sys/class/hwmon/hwmon0/temp1_input';
+	f[0]='/sys/devices/platform/coretemp.0/temp1_input';
+        f[1]='/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp';
+        f[2]='/sys/devices/virtual/thermal/thermal_zone0/temp';
+	//old kernels with proc fs
+        f[3]='/proc/acpi/thermal_zone/THM0/temperature';
+        f[4]='/proc/acpi/thermal_zone/THRM/temperature';
+        f[5]='/proc/acpi/thermal_zone/THR0/temperature';
+        f[6]='/proc/acpi/thermal_zone/TZ0/temperature';
+        f[7]='/sys/bus/acpi/drivers/ATK0110/ATK0110:00/hwmon/hwmon0/temp1_input';
+	//hwmon for new 2.6.39, 3.0 linux kernels
+	f[8]='/sys/class/hwmon/hwmon0/temp1_input';
         let c=0;
         let temperature;
         for (let i=0;i<f.length;i++){
