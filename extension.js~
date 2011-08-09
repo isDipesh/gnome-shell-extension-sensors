@@ -84,6 +84,7 @@ DoIt.prototype = {
                     let temp=findTemperatureFromSensorsOutput(senses[1]);
                     title=getTitle(temp);
                     content=getContent(temp);
+                    //content=temp;
                     command=["echo"];
                 }
             }
