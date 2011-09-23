@@ -147,6 +147,24 @@ function findTemperatureFromSensorsOutput(text){
                     }
                     
                     break;
+                case 'PCI adapter':
+                    //starting from the next line, loop, also increase the outer line counter i
+                    for (var j=i+1;;j++,i++){
+                        //continue only if line exists and isn't adapter
+                        if(senses_lines[j] && !isAdapter(senses_lines[j])){
+                            if(senses_lines[j].substr(0,5)=='temp1'){
+                                //remove all space characters
+                                senses_lines[j]=senses_lines[j].replace(/\s/g, "");
+                                s+=parseFloat(senses_lines[j].substr(7,4));
+                                n++;
+                                //set break flag on, look for temperature no-more
+                                c=1;    
+                            };
+                        }
+                        else break;
+                    }
+                    
+                    break;
                 case 'ACPI interface':
                     //starting from the next line, loop, also increase the outer line counter i
                     for (var j=i+1;;j++,i++){
