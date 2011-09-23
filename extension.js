@@ -52,6 +52,8 @@ DoIt.prototype = {
         f[7]='/sys/bus/acpi/drivers/ATK0110/ATK0110:00/hwmon/hwmon0/temp1_input';
 	//hwmon for new 2.6.39, 3.0 linux kernels
 	f[8]='/sys/class/hwmon/hwmon0/temp1_input';
+	//Debian Sid/Experimental on AMD-64
+	f[9]='/sys/class/hwmon/hwmon0/device/temp1_input';
         let c=0;
         let temperature;
         for (let i=0;i<f.length;i++){
