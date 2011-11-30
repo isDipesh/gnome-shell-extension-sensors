@@ -25,7 +25,7 @@ CpuTemperature.prototype = {
         
         this._update_temp();
         //update every 15 seconds
-        GLib.timeout_add(0, 15000, Lang.bind(this, function () {
+        this._updateTempId = Mainloop.timeout_add_seconds(15, Lang.bind(this, function () {
             this._update_temp();
             return true;
         }));
@@ -191,6 +191,12 @@ CpuTemperature.prototype = {
         return c.toString()+"\u1d3cC";
         //comment the last line and uncomment the next line to display temperature in Fahrenheit
         //return this._toFahrenheit(c).toString()+"\u1d3cF";
+    },
+
+    destroy: function() {
+        PanelMenu.SystemStatusButton.prototype.destroy.call(this);
+        Mainloop.source_remove(this._updateTempId);
+        this._updateTempId = 0;
     }
 }
 
@@ -209,22 +215,14 @@ function main() {
     Panel.STANDARD_TRAY_ICON_SHELL_IMPLEMENTATION['temperature'] = CpuTemperature;
 }
 
-function enable() {
-    let role = 'temperature';
+let indicator;
 
-    if(Main.panel._status_area_order.indexOf(role) == -1) {
-        Main.panel._status_area_order.unshift(role);
-        Main.panel._status_area_shell_implementation[role] = CpuTemperature;
-    
-        let constructor = Main.panel._status_area_shell_implementation[role];
-        let indicator = new constructor();
-        Main.panel.addToStatusArea(role, indicator, 0);
-    } else {
-        Main.panel._statusArea['temperature'].actor.show();
-    }
+function enable() {
+    indicator = new CpuTemperature();
+    Main.panel.addToStatusArea('temperature', indicator);
 }
 
 function disable() {
-    Main.panel._statusArea['temperature'].actor.hide();
+    indicator.destroy();
+    indicator = null;
 }
-
