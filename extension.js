@@ -25,7 +25,7 @@ CpuTemperature.prototype = {
         
         this._update_temp();
         //update every 15 seconds
-        GLib.timeout_add(0, 15000, Lang.bind(this, function () {
+        Mainloop.timeout_add_seconds(15, Lang.bind(this, function () {
             this._update_temp();
             return true;
         }));
