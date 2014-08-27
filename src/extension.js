@@ -41,7 +41,7 @@ const SensorsItem = new Lang.Class({
     },
 
     setMainSensor: function() {
-        this.setOrnament(PopupMenu.Ornament.DOT);
+        this.actor.add_style_class_name('extension-sensors-main-sensor-label');
     },
 
     getLabel: function() {

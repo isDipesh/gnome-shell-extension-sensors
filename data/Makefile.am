@@ -7,6 +7,8 @@ uuid = temperature@xtranophilist
 
 extensiondir = $(topextensiondir)/$(uuid)
 
+dist_extension_DATA = stylesheet.css
+
 nodist_extension_DATA = metadata.json $(EXTRA_EXTENSION)
 
 EXTRA_DIST = metadata.json.in
