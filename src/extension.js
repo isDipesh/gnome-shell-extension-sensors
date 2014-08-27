@@ -189,9 +189,6 @@ const SensorsMenuButton = new Lang.Class({
                 section.addMenuItem(item);
             }
 
-            let _appSys = Shell.AppSystem.get_default();
-            let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
-
             // separator
             section.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
@@ -201,12 +198,12 @@ const SensorsMenuButton = new Lang.Class({
             item.actor.add(new St.Label({ text: '' }));
             item.actor.add(new St.Label({ text: _("Sensors Settings") }));
             item.connect('activate', function () {
-                if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
-                    _gsmPrefs.activate();
-                } else {
-                    _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
-                                     [metadata.uuid],-1,null);
-                }
+                let appSys = Shell.AppSystem.get_default();
+                let app = appSys.lookup_app('gnome-shell-extension-prefs.desktop');
+                let info = app.get_app_info();
+                let timestamp = global.display.get_current_time_roundtrip();
+                info.launch_uris(['extension:///' + uuid],
+                                 global.create_app_launch_context(timestamp, -1));
             });
             section.addMenuItem(item);
         }else{
