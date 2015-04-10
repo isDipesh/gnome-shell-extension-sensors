@@ -6,7 +6,8 @@
   "shell-version": [
     "3.10",
     "3.12",
-    "3.14"
+    "3.14",
+    "3.16"
   ],
   "localedir": "@LOCALEDIR@",
   "url": "@url@", 
