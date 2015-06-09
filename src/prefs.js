@@ -41,8 +41,8 @@ const SensorsPrefsWidget = new GObject.Class({
         this.attach(new Gtk.Label({ label: _("Temperature unit") }), 0, 2, 1, 1);
         let centigradeRadio = new Gtk.RadioButton({ group: null, label: _("Centigrade"), valign: Gtk.Align.START });
         let fahrenheitRadio = new Gtk.RadioButton({ group: centigradeRadio, label: _("Fahrenheit"), valign: Gtk.Align.START });
-        fahrenheitRadio.connect('toggled', Lang.bind(this, this._onUnitChanged));
-        centigradeRadio.connect('toggled', Lang.bind(this, this._onUnitChanged));
+        fahrenheitRadio.connect('toggled', Lang.bind(this, this._onUnitChanged, 'Fahrenheit'));
+        centigradeRadio.connect('toggled', Lang.bind(this, this._onUnitChanged, 'Centigrade'));
         if (this._settings.get_string('unit')=='Centigrade')
             centigradeRadio.active = true;
         else
@@ -221,9 +221,9 @@ const SensorsPrefsWidget = new GObject.Class({
         this._settings.set_int('update-time', update_time.get_value());
     },
 
-    _onUnitChanged: function (unit) {
-        if (unit.get_active()) {
-            this._settings.set_string('unit', unit.label);
+    _onUnitChanged: function (button, unit) {
+        if (button.get_active()) {
+            this._settings.set_string('unit', unit);
         }
     },
 
