@@ -28,7 +28,7 @@ const SensorsItem = new Lang.Class({
         this._label = label;
         this._value = value;
 
-        this.actor.add(new St.Icon({ style_class: 'system-status-icon', icon_name: 'sensors-'+type+'-symbolic' }));
+        this.actor.add(new St.Icon({ style_class: 'system-status-icon', icon_name: 'sensors-'+type+'-symbolic', icon_size: 16 }));
         this.actor.add(new St.Label({text: label}));
         this.actor.add(new St.Label({text: value}), {align: St.Align.END});
     },
