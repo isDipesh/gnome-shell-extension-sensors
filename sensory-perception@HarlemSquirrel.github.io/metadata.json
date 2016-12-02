@@ -1,0 +1,17 @@
+{
+  "description": "Shows CPU temperature, disk temperature, video card temperature, voltage and fan RPM (forked from xtranophilist/gnome-shell-extension-sensors)",
+  "gettext-domain": "sensory-perception",
+  "name": "Sensory Perception",
+  "settings-schema": "org.gnome.shell.extensions.sensory-perception",
+  "shell-version": [
+    "3.12",
+    "3.14",
+    "3.16",
+    "3.18",
+    "3.20",
+    "3.22"
+  ],
+  "url": "https://github.com/HarlemSquirrel/gnome-shell-extension-sensors",
+  "uuid": "sensory-perception@HarlemSquirrel.github.io",
+  "version": 1
+}
