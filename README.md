@@ -1,4 +1,5 @@
-# gnome-shell-extension-sensory-perception
+# Sensory Perception
+### A GNOME Shell Extension
 
 Forked from https://github.com/xtranophilist/gnome-shell-extension-sensors
 
