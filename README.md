@@ -8,8 +8,8 @@ Forked from https://github.com/xtranophilist/gnome-shell-extension-sensors
 ### Manual
 
 ```
-git clone https://github.com/HarlemSquirrel/gnome-shell-extension-sensors.git
-ln -s gnome-shell-extension-sensors/sensory-perception@HarlemSquirrel.github.io ~/.local/share/gnome-shell/extensions/sensory-perception@HarlemSquirrel.github.io
+git clone https://github.com/HarlemSquirrel/gnome-shell-extension-sensory-perception.git
+ln -s ~/gnome-shell-extension-sensory-perception/sensory-perception@HarlemSquirrel.github.io ~/.local/share/gnome-shell/extensions/sensory-perception@HarlemSquirrel.github.io
 ```
 
 ## Customizing labels
