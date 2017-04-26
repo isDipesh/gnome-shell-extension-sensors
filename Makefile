@@ -3,4 +3,4 @@ UUID = $(shell underscore extract --in metadata.json --outfmt text 'uuid')
 FILENAME="$(UUID)-v$(VERSION).zip"
 
 zip:
-	zip -jr $(FILENAME) icons po schemas *.js *.json *.css LICENSE README.md
+	zip -rT $(FILENAME) icons po schemas *.js *.json *.css LICENSE README.md
