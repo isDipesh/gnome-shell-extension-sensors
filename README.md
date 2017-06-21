@@ -1,3 +1,6 @@
+This extensions isn't currently maintained. Please use the this fork: [https://extensions.gnome.org/extension/841/freon/](https://extensions.gnome.org/extension/841/freon/) ([https://github.com/UshakovVasilii/gnome-shell-extension-freon](https://github.com/UshakovVasilii/gnome-shell-extension-freon))
+
+
 gnome-shell-extension-sensors
 =============================
 *gnome-shell-extension-sensors* (previously known as gnome-shell-extension-cpu-temperature)
