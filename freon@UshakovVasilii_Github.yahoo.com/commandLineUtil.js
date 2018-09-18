@@ -2,7 +2,7 @@ const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
-const CommandLineUtil = new Lang.Class({
+var CommandLineUtil = new Lang.Class({
     Name: 'CommandLineUtil',
 
     _init: function(){

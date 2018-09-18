@@ -5,7 +5,7 @@ const Gio = imports.gi.Gio;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-const NvidiaUtil = new Lang.Class({
+var NvidiaUtil = new Lang.Class({
     Name: 'NvidiaUtil',
     Extends: CommandLineUtil.CommandLineUtil,
 
@@ -49,7 +49,7 @@ const NvidiaUtil = new Lang.Class({
         if(!this._output)
             return [];
         let temps = [];
-        for each(let line in this._output) {
+        for (let line of this._output) {
             if(!line)
                 continue;
             temps.push(parseFloat(line));

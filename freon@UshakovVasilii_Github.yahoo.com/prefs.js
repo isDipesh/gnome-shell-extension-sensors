@@ -17,7 +17,7 @@ function init() {
     Convenience.initTranslations();
 }
 
-const FreonPrefsWidget = new GObject.Class({
+var FreonPrefsWidget = new GObject.Class({
     Name: 'Freon.Prefs.Widget',
     GTypeName: 'FreonPrefsWidget',
     Extends: Gtk.Grid,

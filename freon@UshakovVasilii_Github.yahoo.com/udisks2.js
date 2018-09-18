@@ -31,7 +31,7 @@ const Async = {
 }
 
 // routines for handling of udisks2
-const UDisks2  = new Lang.Class({
+var UDisks2  = new Lang.Class({
     Name: 'UDisks2',
 
     _init: function(callback) {
@@ -110,7 +110,7 @@ const UDisks2  = new Lang.Class({
     },
 
     destroy: function(callback) {
-        for each (let proxy in this._udisksProxies){
+        for (let proxy of this._udisksProxies){
             if(proxy.drive){
                 proxy.drive.run_dispose();
             }

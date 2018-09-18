@@ -2,7 +2,7 @@ const Lang = imports.lang;
 const St = imports.gi.St;
 const PopupMenu = imports.ui.popupMenu;
 
-const FreonItem = new Lang.Class({
+var FreonItem = new Lang.Class({
     Name: 'FreonItem',
     Extends: PopupMenu.PopupBaseMenuItem,
 

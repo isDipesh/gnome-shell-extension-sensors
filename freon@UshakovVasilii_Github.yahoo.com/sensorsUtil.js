@@ -4,7 +4,7 @@ const GLib = imports.gi.GLib;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-const SensorsUtil = new Lang.Class({
+var SensorsUtil = new Lang.Class({
     Name: 'SensorsUtil',
     Extends: CommandLineUtil.CommandLineUtil,
 

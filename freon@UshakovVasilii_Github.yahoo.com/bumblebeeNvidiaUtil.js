@@ -5,7 +5,7 @@ const Gio = imports.gi.Gio;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-const BumblebeeNvidiaUtil = new Lang.Class({
+var BumblebeeNvidiaUtil = new Lang.Class({
     Name: 'BumblebeeNvidiaUtil',
     Extends: CommandLineUtil.CommandLineUtil,
 
@@ -49,7 +49,7 @@ const BumblebeeNvidiaUtil = new Lang.Class({
     _detectLabel: function() {
         // optirun nvidia-smi -L
         // GPU 0: GeForce GT 525M (UUID: GPU-...)
-        for each(let line in GLib.spawn_command_line_sync(this._path + " nvidia-smi -L")){
+        for (let line of GLib.spawn_command_line_sync(this._path + " nvidia-smi -L")){
         let match = /.*GPU [\d]:([\w\d\ ]+).*/.exec(line);
             if(match){
                 this._label = match[1];
@@ -82,7 +82,7 @@ const BumblebeeNvidiaUtil = new Lang.Class({
         let label = this._label ? this._label : _('Bumblebee + NVIDIA');
         if(this._active && this._output){
             //         GPU Current Temp            : 37 C
-            for each(let line in this._output) {
+            for (let line of this._output) {
                 if(!line)
                     continue;
                 let r;

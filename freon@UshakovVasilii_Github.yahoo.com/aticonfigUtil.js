@@ -4,7 +4,7 @@ const GLib = imports.gi.GLib;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-const AticonfigUtil = new Lang.Class({
+var AticonfigUtil = new Lang.Class({
     Name: 'AticonfigUtil',
     Extends: CommandLineUtil.CommandLineUtil,
 
@@ -23,7 +23,7 @@ const AticonfigUtil = new Lang.Class({
             return [];
         let label = null;
         let temp = null;
-        for each(let line in this._output) {
+        for (let line of this._output) {
             if(!line)
                 continue;
             let r;
