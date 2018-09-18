@@ -1,3 +1,4 @@
+const ByteArray = imports.byteArray;
 const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -33,7 +34,7 @@ var NvidiaUtil = new Lang.Class({
                   let [line, size] = [null, 0];
 
                   while (([line, size] = outReader.read_line(null)) != null && line != null) {
-                      let match = /.*\[gpu:[\d]\].*\(([\w\d\ ]+)\).*/.exec(line.toString());
+                      let match = /.*\[gpu:[\d]\].*\(([\w\d\ ]+)\).*/.exec(ByteArray.toString(line));
                       if(match){
                           this._labels.push(match[1]);
                       }

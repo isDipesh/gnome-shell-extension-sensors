@@ -1,3 +1,4 @@
+const ByteArray = imports.byteArray;
 const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -33,13 +34,13 @@ var CommandLineUtil = new Lang.Class({
 
                 while (([line, size] = outReader.read_line(null)) != null && line != null) {
                     if(line)
-                        output.push(line.toString());
+                        output.push(ByteArray.toString(line));
                 }
                 stdout.close(null);
 
                 while (([line, size] = errReader.read_line(null)) != null && line != null) {
                     if(line)
-                        output.push(line.toString());
+                        output.push(ByteArray.toString(line));
                 }
                 stderr.close(null);
 
