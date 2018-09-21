@@ -66,7 +66,7 @@ var SensorsUtil = new Lang.Class({
                     continue;
 
                 let fields = chipsetSensors[sensor];
-                for (key in fields) {
+                for (var key in fields) {
                     if (fields.hasOwnProperty(key) && sensorFilter.test(key)) {
                         let feature = {
                             label: sensor,
