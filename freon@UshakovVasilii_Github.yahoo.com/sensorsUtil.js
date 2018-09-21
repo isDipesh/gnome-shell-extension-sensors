@@ -12,34 +12,34 @@ var SensorsUtil = new Lang.Class({
         this.parent();
         let path = GLib.find_program_in_path('sensors');
         // -A: Do not show adapter -j: JSON output
-        this._argv = path ? [path, '-A', 'j'] : null;
+        this._argv = path ? [path, '-A', '-j'] : null;
     },
 
     get temp() {
-        return this._parseGenericSensorsOutput(/^temp\d_input/);
+        return this._parseGenericSensorsOutput(/^temp\d_input/, 'temp');
     },
 
     get gpu() {
-        return this._parseGpuSensorsOutput(/^temp\d_input/);
+        return this._parseGpuSensorsOutput(/^temp\d_input/, 'temp');
     },
 
     get rpm() {
-        return this._parseGenericSensorsOutput(/^fan\d_input/);
+        return this._parseGenericSensorsOutput(/^fan\d_input/, 'rpm');
     },
 
     get volt() {
-        return this._parseGenericSensorsOutput(/^in\d_input/);
+        return this._parseGenericSensorsOutput(/^in\d_input/, 'volt');
     },
 
-    _parseGenericSensorsOutput: function(filter) {
-        return this._parseSensorsOutput(filter, false);
+    _parseGenericSensorsOutput: function(sensorFilter, sensorType) {
+        return this._parseSensorsOutput(sensorFilter, sensorType, false);
     },
 
-    _parseGpuSensorsOutput: function(filter) {
-        return this._parseSensorsOutput(filter, true);
+  _parseGpuSensorsOutput: function(sensorFilter, sensorType) {
+        return this._parseSensorsOutput(sensorFilter, sensorType, true);
     },
 
-  _parseSensorsOutput: function(filter, gpuFlag) {
+  _parseSensorsOutput: function(sensorFilter, sensorType, gpuFlag) {
         if(!this._output)
             return [];
 
@@ -67,10 +67,10 @@ var SensorsUtil = new Lang.Class({
 
                 let fields = chipsetSensors[sensor];
                 for (key in fields) {
-                    if (fields.hasOwnProperty(key) && filter.test(key)) {
+                    if (fields.hasOwnProperty(key) && sensorFilter.test(key)) {
                         let feature = {
                             label: sensor,
-                            temp: parseFloat(fields[key])
+                            [sensorType]: parseFloat(fields[key])
                         };
                         sensors.push(feature);
                         break;
