@@ -11,136 +11,73 @@ var SensorsUtil = new Lang.Class({
     _init: function() {
         this.parent();
         let path = GLib.find_program_in_path('sensors');
-        this._argv = path ? [path] : null;
+        // -A: Do not show adapter -j: JSON output
+        this._argv = path ? [path, '-A', '-j'] : null;
     },
 
     get temp() {
-        return this._parseGenericSensorsOutput(this._parseSensorsTemperatureLine);
-        // wrong lm_sensors not problem of this application #16
-        // return s.filter(function(e){
-        //     return e.temp > 0 && e.temp < 115;
-        // });
+        return this._parseGenericSensorsOutput(/^temp\d_input/, 'temp');
     },
 
     get gpu() {
-        return this._parseGpuSensorsOutput(this._parseSensorsTemperatureLine);
+        return this._parseGpuSensorsOutput(/^temp\d_input/, 'temp');
     },
 
     get rpm() {
-        // 0 is normal value for turned off fan
-        return this._parseGenericSensorsOutput(this._parseFanRPMLine);
+        return this._parseGenericSensorsOutput(/^fan\d_input/, 'rpm');
     },
 
     get volt() {
-        return this._parseGenericSensorsOutput(this._parseVoltageLine);
+        return this._parseGenericSensorsOutput(/^in\d_input/, 'volt');
     },
 
-    _parseGenericSensorsOutput: function(parser) {
-        return this._parseSensorsOutput(parser, false);
+    _parseGenericSensorsOutput: function(sensorFilter, sensorType) {
+        return this._parseSensorsOutput(sensorFilter, sensorType, false);
     },
 
-    _parseGpuSensorsOutput: function(parser) {
-        return this._parseSensorsOutput(parser, true);
+  _parseGpuSensorsOutput: function(sensorFilter, sensorType) {
+        return this._parseSensorsOutput(sensorFilter, sensorType, true);
     },
 
-    _parseSensorsOutput: function(parser, gpuFlag) {
+  _parseSensorsOutput: function(sensorFilter, sensorType, gpuFlag) {
         if(!this._output)
             return [];
 
-        let feature_label = undefined;
-        let feature_value = undefined;
-        let sensors = [];
-        //iterate through each lines
-        for(let i = 0; i < this._output.length; i++){
+        // Prep output as one big string for JSON parser
+        let output = this._output.join('');
 
-            let isGpuDriver = this._output[i].indexOf("radeon") != -1
-                                || this._output[i].indexOf("amdgpu") != -1
-                                || this._output[i].indexOf("nouveau") != -1;
-
-            if (gpuFlag != isGpuDriver) {
-                // skip driver if gpu requested and driver is not a gpu or the opposite
-                continue;
-            }
-
-            // skip chipset driver name and 'Adapter:' lines
-            i += 2;
-
-            // get every feature of the chip
-            while(this._output[i]){
-               // if it is not a continutation of a feature line
-               if(this._output[i].indexOf(' ') != 0){
-                  let feature = parser(feature_label, feature_value);
-                  if (feature){
-                      sensors.push(feature);
-                      feature = undefined;
-                  }
-                  [feature_label, feature_value] = this._output[i].split(':');
-               } else{
-                  feature_value += this._output[i];
-               }
-               i++;
-            }
+        let data = []
+        try {
+            data = JSON.parse(output);
+        } catch (e) {
+            global.log(e.toString());
+            return [];
         }
-        let feature = parser(feature_label, feature_value);
-        if (feature) {
-            sensors.push(feature);
-            feature = undefined;
+
+        let sensors = [];
+        for (var chipset in data) {
+            let gpuFilter = /(radeon|amdgpu|nouveau)/;
+            if (!data.hasOwnProperty(chipset) || gpuFlag != gpuFilter.test(chipset))
+                continue;
+
+            let chipsetSensors = data[chipset]
+            for (var sensor in chipsetSensors) {
+                if (!chipsetSensors.hasOwnProperty(sensor))
+                    continue;
+
+                let fields = chipsetSensors[sensor];
+                for (var key in fields) {
+                    if (fields.hasOwnProperty(key) && sensorFilter.test(key)) {
+                        let feature = {
+                            label: sensor,
+                            [sensorType]: parseFloat(fields[key])
+                        };
+                        sensors.push(feature);
+                        break;
+                    }
+                }
+            }
         }
         return sensors;
-    },
-
-    _parseSensorsTemperatureLine: function(label, value) {
-        if(label == undefined || value == undefined)
-            return undefined;
-        let curValue = value.trim().split('  ')[0];
-        // does the current value look like a temperature unit (°C)?
-        if(curValue.indexOf("C", curValue.length - "C".length) !== -1){
-            return {
-                label: label.trim(),
-                temp: parseFloat(curValue.split(' ')[0])
-            };
-            // let r;
-            // sensor['low']  = (r = /low=\+(\d{1,3}.\d)/.exec(value))  ? parseFloat(r[1]) : undefined;
-            // sensor['high'] = (r = /high=\+(\d{1,3}.\d)/.exec(value)) ? parseFloat(r[1]) : undefined;
-            // sensor['crit'] = (r = /crit=\+(\d{1,3}.\d)/.exec(value)) ? parseFloat(r[1]) : undefined;
-            // sensor['hyst'] = (r = /hyst=\+(\d{1,3}.\d)/.exec(value)) ? parseFloat(r[1]) : undefined;
-        }
-        return undefined;
-    },
-
-    _parseFanRPMLine: function(label, value) {
-        if(label == undefined || value == undefined)
-            return undefined;
-
-        let curValue = value.trim().split('  ')[0];
-        // does the current value look like a fan rpm line?
-        if(curValue.indexOf("RPM", curValue.length - "RPM".length) !== -1){
-            return {
-                label: label.trim(),
-                rpm: parseFloat(curValue.split(' ')[0])
-            };
-            // let r;
-            // sensor['min'] = (r = /min=(\d{1,5})/.exec(value)) ? parseFloat(r[1]) : undefined;
-        }
-        return undefined;
-    },
-
-    _parseVoltageLine: function(label, value) {
-        if(label == undefined || value == undefined)
-            return undefined;
-
-        let curValue = value.trim().split('  ')[0];
-        // does the current value look like a voltage line?
-        if(curValue.indexOf("V", curValue.length - "V".length) !== -1){
-            return {
-                label: label.trim(),
-                volt: parseFloat(curValue.split(' ')[0])
-            };
-            // let r;
-            // sensor['min'] = (r = /min=(\d{1,3}.\d)/.exec(value)) ? parseFloat(r[1]) : undefined;
-            // sensor['max'] = (r = /max=(\d{1,3}.\d)/.exec(value)) ? parseFloat(r[1]) : undefined;
-        }
-        return undefined;
     }
-
 });
