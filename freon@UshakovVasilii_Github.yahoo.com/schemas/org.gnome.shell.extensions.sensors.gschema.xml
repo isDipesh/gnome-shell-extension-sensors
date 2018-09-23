@@ -75,5 +75,11 @@
       <description>Group more than three voltage menu items</description>
     </key>
 
+    <key type="b" name="debug">
+      <default>false</default>
+      <summary>Enable debug logging</summary>
+      <description>Enable debug logging from the extension</description>
+    </key>
+
   </schema>
 </schemalist>
