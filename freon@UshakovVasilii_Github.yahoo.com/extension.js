@@ -7,6 +7,7 @@ const Util = imports.misc.util;
 const Mainloop = imports.mainloop;
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
@@ -21,6 +22,30 @@ const FreonItem = Me.imports.freonItem;
 const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 
+function _makeLogFunction(prefix) {
+    return msg => {
+        // Grab the second line of a stack trace, i.e. caller of debug()
+        let regex = /(?:(?:[^<.]+<\.)?([^@]+))?@(.+):(\d+):\d+/g;
+        let trace = ((msg.stack) ? msg : new Error()).stack.split('\n')[1];
+        let [m, func, file, line] = regex.exec(trace);
+        file = GLib.path_get_basename(file);
+
+        let hdr = [file, func, line].filter(k => (k)).join(':');
+
+        GLib.log_structured(
+            'freon',
+            GLib.LogLevelFlags.LEVEL_MESSAGE,
+            {
+                MESSAGE: `[${prefix}] [${hdr}]: ${msg}`,
+                SYSLOG_IDENTIFIER: 'org.gnome.shell.extensions.freon',
+                CODE_FILE: file,
+                CODE_FUNC: `${func}`,
+                CODE_LINE: `${line}`
+            }
+        );
+    }
+}
+
 var FreonMenuButton = new Lang.Class({
     Name: 'FreonMenuButton',
     Extends: PanelMenu.Button,
@@ -29,6 +54,13 @@ var FreonMenuButton = new Lang.Class({
         this.parent(St.Align.START);
 
         this._settings = Convenience.getSettings();
+
+        var _debugFunc = _makeLogFunction('DEBUG');
+        this.debug = this._settings.get_boolean('debug') ? _debugFunc : () => {};
+
+        this._settings.connect('changed::debug', () => {
+            this.debug = this._settings.get_boolean('debug') ? _debugFunc : () => {};
+        });
 
         this._sensorMenuItems = {};
 
@@ -244,14 +276,14 @@ var FreonMenuButton = new Lang.Class({
         let needUpdate = false;
         for (let sensor of Object.values(this._utils)) {
             if (sensor.available && sensor.updated) {
-                // global.log(sensor + ' updated');
+                this.debug(sensor + ' updated');
                 sensor.updated = false;
                 needUpdate = true;
             }
         }
         if(needUpdate) {
             this._updateDisplay(); // #74
-            // global.log('update display');
+            this.debug('update display');
         }
     },
 
@@ -410,7 +442,7 @@ var FreonMenuButton = new Lang.Class({
 
             if(this._needRerender){
                 this._needRerender = false;
-                global.log('[FREON] Render all MenuItems');
+                this.debug('Render all MenuItems');
                 this.menu.removeAll();
                 this._appendMenuItems(sensors);
             }
