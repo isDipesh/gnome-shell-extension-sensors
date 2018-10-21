@@ -51,9 +51,11 @@ var NvidiaUtil = new Lang.Class({
             return [];
         let temps = [];
         for (let line of this._output) {
-            if(!line)
+            let convertedLine = parseFloat(line);
+
+            if(!line || !convertedLine)
                 continue;
-            temps.push(parseFloat(line));
+            temps.push(convertedLine);
         }
 
         let gpus = [];
