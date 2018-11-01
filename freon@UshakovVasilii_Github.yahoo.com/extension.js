@@ -406,7 +406,7 @@ var FreonMenuButton = new Lang.Class({
                 sensors.push({
                     type : 'voltage',
                     label:voltage.label,
-                    value:_("%s%.2fV").format(((voltage.volt >= 0) ? '+' : '-'),
+                    value:_("%s%.2fV").format(((voltage.volt >= 0) ? '+' : ''),
                     voltage.volt)});
             }
 
