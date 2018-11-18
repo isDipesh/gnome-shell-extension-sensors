@@ -468,14 +468,14 @@ var FreonMenuButton = new Lang.Class({
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         let wiki = new PopupMenu.PopupBaseMenuItem();
-        wiki.actor.add(new St.Label({ text: _("GitHub / WiKi") }), { expand: true, x_fill: false });
+        wiki.actor.add(new St.Label({ text: _("Go to the Freon wiki") }), { expand: true, x_fill: false });
         wiki.connect('activate', function () {
                             Util.spawn(["xdg-open", "https://github.com/UshakovVasilii/gnome-shell-extension-freon/wiki"]);
         });
         this.menu.addMenuItem(wiki);
 
         let settings = new PopupMenu.PopupBaseMenuItem();
-        settings.actor.add(new St.Label({ text: _("Sensors Settings") }), { expand: true, x_fill: false });
+        settings.actor.add(new St.Label({ text: _("Sensor Settings") }), { expand: true, x_fill: false });
         settings.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
         });
