@@ -459,22 +459,27 @@ var FreonMenuButton = new Lang.Class({
                 Util.spawn(["xdg-open", "https://github.com/UshakovVasilii/gnome-shell-extension-freon/wiki/Dependency"]);
             });
             this.menu.addMenuItem(item);
-            this._appendSettingsMenuItem();
+            this._appendStaticMenuItems();
         }
     },
 
-    _appendSettingsMenuItem : function(){
+    _appendStaticMenuItems : function(){
         // separator
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        let item = new PopupMenu.PopupBaseMenuItem();
-        item.actor.add(new St.Label({ text: _("Sensors Settings") }), { expand: true, x_fill: false });
+        let wiki = new PopupMenu.PopupBaseMenuItem();
+        wiki.actor.add(new St.Label({ text: _("GitHub / WiKi") }), { expand: true, x_fill: false });
+        wiki.connect('activate', function () {
+                            Util.spawn(["xdg-open", "https://github.com/UshakovVasilii/gnome-shell-extension-freon/wiki"]);
+        });
+        this.menu.addMenuItem(wiki);
 
-        item.connect('activate', function () {
+        let settings = new PopupMenu.PopupBaseMenuItem();
+        settings.actor.add(new St.Label({ text: _("Sensors Settings") }), { expand: true, x_fill: false });
+        settings.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
         });
-
-        this.menu.addMenuItem(item);
+        this.menu.addMenuItem(settings);
     },
 
     _appendMenuItems : function(sensors){
@@ -585,7 +590,7 @@ var FreonMenuButton = new Lang.Class({
                 }
             }
         }
-        this._appendSettingsMenuItem();
+        this._appendStaticMenuItems();
     },
 
 
