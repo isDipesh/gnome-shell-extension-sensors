@@ -69,7 +69,7 @@ var FreonPrefsWidget = new GObject.Class({
             help : _("Works if you have more than three voltage sensors")});
 
         this._addComboBox({
-            items : {none : 'None', hddtemp : 'Hddtemp', udisks2 : 'UDisks2'},
+            items : {none : 'None', hddtemp : 'Hddtemp', udisks2 : 'UDisks2', smartctl : 'smartctl'},
             key: 'drive-utility', y : i, x : 0,
             label: _('HDD/SSD Temperature Utility')
         });

@@ -16,6 +16,7 @@ const AticonfigUtil = Me.imports.aticonfigUtil;
 const NvidiaUtil = Me.imports.nvidiaUtil;
 const HddtempUtil = Me.imports.hddtempUtil;
 const SensorsUtil = Me.imports.sensorsUtil;
+const smartctlUtil = Me.imports.smartctlUtil;
 const BumblebeeNvidiaUtil = Me.imports.bumblebeeNvidiaUtil;
 const FreonItem = Me.imports.freonItem;
 
@@ -196,6 +197,9 @@ var FreonMenuButton = new Lang.Class({
                 this._utils.disks = new UDisks2.UDisks2(Lang.bind(this, function() {
                     // this._updateDisplay(); we cannot change actor in background thread #74
                 }));
+                break;
+            case 'smartctl':
+                this._utils.disks = new smartctlUtil.smartctlUtil();
                 break;
         }
     },
