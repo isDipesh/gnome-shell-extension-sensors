@@ -16,19 +16,19 @@ var SensorsUtil = new Lang.Class({
     },
 
     get temp() {
-        return this._parseGenericSensorsOutput(/^temp\d_input/, 'temp');
+        return this._parseGenericSensorsOutput(/^temp\d+_input/, 'temp');
     },
 
     get gpu() {
-        return this._parseGpuSensorsOutput(/^temp\d_input/, 'temp');
+        return this._parseGpuSensorsOutput(/^temp\d+_input/, 'temp');
     },
 
     get rpm() {
-        return this._parseGenericSensorsOutput(/^fan\d_input/, 'rpm');
+        return this._parseGenericSensorsOutput(/^fan\d+_input/, 'rpm');
     },
 
     get volt() {
-        return this._parseGenericSensorsOutput(/^in\d_input/, 'volt');
+        return this._parseGenericSensorsOutput(/^in\d+_input/, 'volt');
     },
 
     _parseGenericSensorsOutput: function(sensorFilter, sensorType) {
