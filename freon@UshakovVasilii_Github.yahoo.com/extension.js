@@ -133,7 +133,7 @@ var FreonMenuButton = new Lang.Class({
             this._menuLayout.add(i);
         }
         let l = new St.Label({
-            text: '\u2026', /* ... */
+            text: '\u26a0',  // ⚠, warning
             y_expand: true,
             y_align: Clutter.ActorAlign.CENTER});
         this._hotLabels[s] = l;
@@ -415,6 +415,9 @@ var FreonMenuButton = new Lang.Class({
             }
 
             this._fixNames(sensors);
+
+            for (let k in this._hotLabels)
+                this._hotLabels[k].set_text('\u26a0');  // ⚠, warning
 
             for (let s of sensors)
                 if(s.type != 'separator') {
