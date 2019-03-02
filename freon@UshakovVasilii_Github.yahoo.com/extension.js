@@ -610,8 +610,7 @@ var FreonMenuButton = new Lang.Class({
         }
         let format = '%.1f';
         if (!this._settings.get_boolean('show-decimal-value')){
-            //ret = Math.round(value);
-            format = '%d';
+            format = '%.0f';
         }
         format += '%s';
         return format.format(value, (this._settings.get_string('unit')=='fahrenheit') ? "\u00b0F" : "\u00b0C");
