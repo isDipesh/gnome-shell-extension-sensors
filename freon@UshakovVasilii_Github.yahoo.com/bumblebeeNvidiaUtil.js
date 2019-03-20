@@ -1,16 +1,13 @@
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-var BumblebeeNvidiaUtil = new Lang.Class({
-    Name: 'BumblebeeNvidiaUtil',
-    Extends: CommandLineUtil.CommandLineUtil,
+var BumblebeeNvidiaUtil = class extends CommandLineUtil.CommandLineUtil {
 
-    _init: function() {
-        this.parent();
+    constructor() {
+        super();
         // optirun nvidia-smi -q -d TEMPERATURE
         this._path = GLib.find_program_in_path('optirun');
         this._argv = this._path ? [this._path, 'nvidia-smi', '-q', '-d', 'TEMPERATURE'] : null;
@@ -35,7 +32,7 @@ var BumblebeeNvidiaUtil = new Lang.Class({
             lockFilePath).monitor_file(Gio.FileMonitorFlags.NONE, null
         );
         this._lockMonitor.id = this._lockMonitor.connect(
-            'changed', Lang.bind(this, this._statusChanged)
+            'changed', this._statusChanged.bind(this)
         );
 
         // Check if the lock file already exists
@@ -44,9 +41,9 @@ var BumblebeeNvidiaUtil = new Lang.Class({
             this._detectLabel();
             this._active = true;
         }
-    },
+    }
 
-    _detectLabel: function() {
+    _detectLabel() {
         // optirun nvidia-smi -L
         // GPU 0: GeForce GT 525M (UUID: GPU-...)
         for (let line of GLib.spawn_command_line_sync(this._path + " nvidia-smi -L")){
@@ -58,9 +55,9 @@ var BumblebeeNvidiaUtil = new Lang.Class({
                 break;
             }
         }
-    },
+    }
 
-    _statusChanged: function(monitor, a_file, other_file, event_type) {
+    _statusChanged(monitor, a_file, other_file, event_type) {
         if (event_type == Gio.FileMonitorEvent.CREATED) {
             if(this._argv && !this._label)
                 this._detectLabel();
@@ -68,14 +65,14 @@ var BumblebeeNvidiaUtil = new Lang.Class({
         } else if (event_type ==  Gio.FileMonitorEvent.DELETED) {
             this._active = false;
         }
-    },
+    }
 
-    execute: function(callback) {
+    execute(callback) {
         if(this._active)
             this.parent(callback);
         else
             this._output = [];
-    },
+    }
 
     get temp() {
         let key = 'bumblebee-nvidia'
@@ -95,11 +92,11 @@ var BumblebeeNvidiaUtil = new Lang.Class({
             }
         }
         return [{label: key, temp: null, displayName: label}];
-    },
+    }
 
-    destroy: function(){
+    destroy(){
         this.parent();
         this._lockMonitor.disconnect(this._lockMonitor.id);
     }
 
-});
+};

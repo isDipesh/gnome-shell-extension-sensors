@@ -1,16 +1,13 @@
 const ByteArray = imports.byteArray;
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-var NvidiaUtil = new Lang.Class({
-    Name: 'NvidiaUtil',
-    Extends: CommandLineUtil.CommandLineUtil,
+var NvidiaUtil = class extends CommandLineUtil.CommandLineUtil {
 
-    _init: function() {
+    constructor() {
         this.parent();
         let path = GLib.find_program_in_path('nvidia-settings');
         this._argv = path ? [path, '-q', 'gpucoretemp', '-t'] : null;
@@ -29,7 +26,7 @@ var NvidiaUtil = new Lang.Class({
 
             GLib.close(stdinFd);
             GLib.close(stderrFd);
-            let childWatch = GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, Lang.bind(this, function(pid, status, requestObj) {
+            let childWatch = GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, (pid, status, requestObj) => {
                   let output = [];
                   let [line, size] = [null, 0];
 
@@ -42,9 +39,9 @@ var NvidiaUtil = new Lang.Class({
 
                   stdout.close(null);
                   GLib.source_remove(childWatch);
-            }));
+            });
         }
-    },
+    }
 
     get temp() {
         if(!this._output)
@@ -79,4 +76,4 @@ var NvidiaUtil = new Lang.Class({
         return gpus;
     }
 
-});
+};

@@ -1,18 +1,15 @@
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-var AticonfigUtil = new Lang.Class({
-    Name: 'AticonfigUtil',
-    Extends: CommandLineUtil.CommandLineUtil,
+var AticonfigUtil = class extends CommandLineUtil.CommandLineUtil {
 
-    _init: function() {
-        this.parent();
+    constructor() {
+        super();
         let path = GLib.find_program_in_path('aticonfig');
         this._argv = path ? [path, '--odgt'] : null;
-    },
+    }
 
     /*
     Default Adapter - AMD Radeon R9 200 Series     
@@ -39,4 +36,4 @@ var AticonfigUtil = new Lang.Class({
         return [{ label : label.trim(), temp : temp}];
     }
 
-});
+};

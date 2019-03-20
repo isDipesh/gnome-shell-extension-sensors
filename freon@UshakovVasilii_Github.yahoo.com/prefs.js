@@ -1,10 +1,10 @@
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const Lang = imports.lang;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+
 const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 
@@ -14,19 +14,16 @@ const modelColumn = {
 }
 
 function init() {
-    Convenience.initTranslations();
+    ExtensionUtils.initTranslations();
 }
 
-var FreonPrefsWidget = new GObject.Class({
-    Name: 'Freon.Prefs.Widget',
-    GTypeName: 'FreonPrefsWidget',
-    Extends: Gtk.Grid,
+var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget extends Gtk.Grid {
 
-    _init: function(params) {
-        this.parent(params);
+    _init() {
+        super._init();
         this.margin = this.row_spacing = this.column_spacing = 20;
 
-        this._settings = Convenience.getSettings();
+        this._settings = ExtensionUtils.getSettings();
 
         let i = 0;
 
@@ -83,9 +80,9 @@ var FreonPrefsWidget = new GObject.Class({
             key: 'gpu-utility', y : i, x : 2,
             label: _('Video Card Temperature Utility')
         });
-    },
+    }
 
-    _addSwitch : function(params){
+    _addSwitch(params){
         let lbl = new Gtk.Label({label: params.label,halign : Gtk.Align.END});
         this.attach(lbl, params.x, params.y, 1, 1);
         let sw = new Gtk.Switch({halign : Gtk.Align.END, valign : Gtk.Align.CENTER});
@@ -95,9 +92,9 @@ var FreonPrefsWidget = new GObject.Class({
             sw.set_tooltip_text(params.help);
         }
         this._settings.bind(params.key, sw, 'active', Gio.SettingsBindFlags.DEFAULT);
-    },
+    }
 
-    _addComboBox : function(params){
+    _addComboBox(params){
         let model = new Gtk.ListStore();
         model.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING]);
 
@@ -112,12 +109,12 @@ var FreonPrefsWidget = new GObject.Class({
 
         combobox.set_active(Object.keys(params.items).indexOf(this._settings.get_string(params.key)));
         
-        combobox.connect('changed', Lang.bind(this, function(entry) {
+        combobox.connect('changed', (entry) => {
             let [success, iter] = combobox.get_active_iter();
             if (!success)
                 return;
             this._settings.set_string(params.key, model.get_value(iter, 0))
-        }));
+        });
 
         this.attach(new Gtk.Label({ label: params.label, halign : Gtk.Align.END}), params.x, params.y, 1, 1);
         this.attach(combobox, params.x + 1, params.y, 1, 1);

@@ -1,13 +1,10 @@
-const Lang = imports.lang;
 const St = imports.gi.St;
 const PopupMenu = imports.ui.popupMenu;
 
-var FreonItem = new Lang.Class({
-    Name: 'FreonItem',
-    Extends: PopupMenu.PopupBaseMenuItem,
+var FreonItem = class extends PopupMenu.PopupBaseMenuItem {
 
-    _init: function(gIcon, key, label, value, displayName) {
-        this.parent();
+    constructor(gIcon, key, label, value, displayName) {
+        super();
         this._main = false;
         this._key = key;
         this._gIcon = gIcon;
@@ -17,7 +14,7 @@ var FreonItem = new Lang.Class({
         this.actor.add(this._labelActor, {x_fill: true, expand: true});
         this._valueLabel = new St.Label({text: value});
         this.actor.add(this._valueLabel);
-    },
+    }
 
     set main(main) {
         if(main)
@@ -25,25 +22,25 @@ var FreonItem = new Lang.Class({
         else
             this.setOrnament(PopupMenu.Ornament.NONE);
         this._main = main;
-    },
+    }
 
     get main() {
         return this._main;
-    },
+    }
 
     get key() {
         return this._key;
-    },
+    }
 
     set display_name(text) {
         return this._labelActor.text = text;
-    },
+    }
 
     get gicon() {
         return this._gIcon;
-    },
+    }
 
     set value(value) {
         this._valueLabel.text = value;
     }
-});
+};

@@ -1,15 +1,12 @@
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-var HddtempUtil = new Lang.Class({
-    Name: 'HddtempUtil',
-    Extends: CommandLineUtil.CommandLineUtil,
+var HddtempUtil = class extends CommandLineUtil.CommandLineUtil {
 
-    _init: function() {
-        this.parent();
+    constructor() {
+        super();
         let hddtempArgv = GLib.find_program_in_path('hddtemp');
         if(hddtempArgv) {
             // check if this user can run hddtemp directly.
@@ -52,7 +49,7 @@ var HddtempUtil = new Lang.Class({
             // use net cat to get data
             this._argv = [nc, 'localhost', port.toString()];
         }
-    },
+    }
 
     get temp() {
         if(!this._output)
@@ -78,4 +75,4 @@ var HddtempUtil = new Lang.Class({
         return sensors;
     }
 
-});
+};

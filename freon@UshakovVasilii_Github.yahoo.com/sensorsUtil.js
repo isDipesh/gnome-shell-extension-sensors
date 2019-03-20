@@ -1,45 +1,42 @@
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-var SensorsUtil = new Lang.Class({
-    Name: 'SensorsUtil',
-    Extends: CommandLineUtil.CommandLineUtil,
+var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
 
-    _init: function() {
-        this.parent();
+    constructor() {
+        super();
         let path = GLib.find_program_in_path('sensors');
         // -A: Do not show adapter -j: JSON output
         this._argv = path ? [path, '-A', '-j'] : null;
-    },
+    }
 
     get temp() {
         return this._parseGenericSensorsOutput(/^temp\d+_input/, 'temp');
-    },
+    }
 
     get gpu() {
         return this._parseGpuSensorsOutput(/^temp\d+_input/, 'temp');
-    },
+    }
 
     get rpm() {
         return this._parseGenericSensorsOutput(/^fan\d+_input/, 'rpm');
-    },
+    }
 
     get volt() {
         return this._parseGenericSensorsOutput(/^in\d+_input/, 'volt');
-    },
+    }
 
-    _parseGenericSensorsOutput: function(sensorFilter, sensorType) {
+    _parseGenericSensorsOutput(sensorFilter, sensorType) {
         return this._parseSensorsOutput(sensorFilter, sensorType, false);
-    },
+    }
 
-  _parseGpuSensorsOutput: function(sensorFilter, sensorType) {
+    _parseGpuSensorsOutput(sensorFilter, sensorType) {
         return this._parseSensorsOutput(sensorFilter, sensorType, true);
-    },
+    }
 
-  _parseSensorsOutput: function(sensorFilter, sensorType, gpuFlag) {
+  _parseSensorsOutput(sensorFilter, sensorType, gpuFlag) {
         if(!this._output)
             return [];
 
@@ -80,4 +77,4 @@ var SensorsUtil = new Lang.Class({
         }
         return sensors;
     }
-});
+};

@@ -1,4 +1,3 @@
-const Lang = imports.lang;
 const Gio = imports.gi.Gio;
 
 const UDisksDriveProxy = Gio.DBusProxy.makeProxyWrapper(
@@ -18,7 +17,7 @@ const UDisksDriveAtaProxy = Gio.DBusProxy.makeProxyWrapper(
 // Poor man's async.js
 const Async = {
     // mapping will be done in parallel
-    map: function(arr, mapClb /* function(in, successClb)) */, resClb /* function(result) */) {
+    map(arr, mapClb /* function(in, successClb)) */, resClb /* function(result) */) {
         let counter = arr.length;
         let result = [];
         for (let i = 0; i < arr.length; ++i) {
@@ -31,30 +30,29 @@ const Async = {
 }
 
 // routines for handling of udisks2
-var UDisks2  = new Lang.Class({
-    Name: 'UDisks2',
+var UDisks2  = class {
 
-    _init: function(callback) {
+    constructor(callback) {
         this.parent();
         this._udisksProxies = [];
-        this._get_drive_ata_proxies(Lang.bind(this, function(proxies) {
+        this._get_drive_ata_proxies((proxies) => {
             this._udisksProxies = proxies;
             callback();
-        }));
+        });
         this._updated = true;
-    },
+    }
 
     get available(){
         return this._udisksProxies.length > 0;
-    },
+    }
 
     get updated (){
        return this._updated;
-    },
+    }
  
     set updated (updated){
         this._updated = updated;
-    },
+    }
 
     // creates a list of sensor objects from the list of proxies given
     get temp() {
@@ -67,10 +65,10 @@ var UDisks2  = new Lang.Class({
                 temp: proxy.ata.SmartTemperature - 273.15
             };
         });
-    },
+    }
 
     // calls callback with [{ drive: UDisksDriveProxy, ata: UDisksDriveAtaProxy }, ... ] for every drive that implements both interfaces
-    _get_drive_ata_proxies: function(callback) {
+    _get_drive_ata_proxies(callback) {
         Gio.DBusObjectManagerClient.new(Gio.DBus.system, 0, "org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", null, null, function(src, res) {
             try {
                 let objMgr = Gio.DBusObjectManagerClient.new_finish(res); //might throw
@@ -107,9 +105,9 @@ var UDisks2  = new Lang.Class({
                 global.log('[FREON] Could not find UDisks2 objects: ' + e);
             }
         });
-    },
+    }
 
-    destroy: function(callback) {
+    destroy(callback) {
         for (let proxy of this._udisksProxies){
             if(proxy.drive){
                 proxy.drive.run_dispose();
@@ -119,10 +117,10 @@ var UDisks2  = new Lang.Class({
             }
         }
         this._udisksProxies = [];
-    },
+    }
 
-    execute: function(callback) {
+    execute(callback) {
         this._updated = true;
-    },
+    }
 
-});
+};
