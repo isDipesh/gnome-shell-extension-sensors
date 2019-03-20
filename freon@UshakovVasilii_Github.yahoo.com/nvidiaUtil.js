@@ -8,7 +8,7 @@ const CommandLineUtil = Me.imports.commandLineUtil;
 var NvidiaUtil = class extends CommandLineUtil.CommandLineUtil {
 
     constructor() {
-        this.parent();
+        super();
         let path = GLib.find_program_in_path('nvidia-settings');
         this._argv = path ? [path, '-q', 'gpucoretemp', '-t'] : null;
         this._labels = [];

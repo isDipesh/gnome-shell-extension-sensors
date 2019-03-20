@@ -69,7 +69,7 @@ var BumblebeeNvidiaUtil = class extends CommandLineUtil.CommandLineUtil {
 
     execute(callback) {
         if(this._active)
-            this.parent(callback);
+            super.execute(callback);
         else
             this._output = [];
     }
@@ -95,7 +95,7 @@ var BumblebeeNvidiaUtil = class extends CommandLineUtil.CommandLineUtil {
     }
 
     destroy(){
-        this.parent();
+        super.destroy();
         this._lockMonitor.disconnect(this._lockMonitor.id);
     }
 

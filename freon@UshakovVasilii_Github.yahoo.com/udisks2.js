@@ -33,7 +33,6 @@ const Async = {
 var UDisks2  = class {
 
     constructor(callback) {
-        this.parent();
         this._udisksProxies = [];
         this._get_drive_ata_proxies((proxies) => {
             this._udisksProxies = proxies;
@@ -49,7 +48,7 @@ var UDisks2  = class {
     get updated (){
        return this._updated;
     }
- 
+
     set updated (updated){
         this._updated = updated;
     }

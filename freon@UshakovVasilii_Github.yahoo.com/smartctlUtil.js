@@ -6,7 +6,7 @@ const CommandLineUtil = Me.imports.commandLineUtil;
 var smartctlUtil = class extends CommandLineUtil.CommandLineUtil {
 
     constructor() {
-        this.parent();
+        super();
         let path = GLib.find_program_in_path('smartctl');
         this._argv = path ? [path, '-x', '/dev/nvme0'] : null;
     }
@@ -46,4 +46,3 @@ var smartctlUtil = class extends CommandLineUtil.CommandLineUtil {
     }
 
 };
-

@@ -7,9 +7,10 @@ const Mainloop = imports.mainloop;
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
 const UDisks2 = Me.imports.udisks2;
 const AticonfigUtil = Me.imports.aticonfigUtil;
 const NvidiaUtil = Me.imports.nvidiaUtil;
@@ -46,12 +47,11 @@ function _makeLogFunction(prefix) {
     }
 }
 
-const FreonMenuButton = class extends PanelMenu.Button {
+const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extends PanelMenu.Button {
+    _init() {
+        super._init(St.Align.START);
 
-    constructor(){
-        super(St.Align.START);
-
-        this._settings = Convenience.getSettings();
+        this._settings = ExtensionUtils.getSettings();
 
         var _debugFunc = _makeLogFunction('DEBUG');
         this.debug = this._settings.get_boolean('debug') ? _debugFunc : () => {};
@@ -619,12 +619,12 @@ const FreonMenuButton = class extends PanelMenu.Button {
     get positionInPanel(){
         return this._settings.get_string('position-in-panel');
     }
-};
+});
 
 let freonMenu;
 
 function init(extensionMeta) {
-    Convenience.initTranslations();
+    ExtensionUtils.initTranslations();
 }
 
 function enable() {
