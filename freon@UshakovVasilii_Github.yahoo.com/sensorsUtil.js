@@ -54,7 +54,7 @@ var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
         let sensors = [];
         for (var chipset in data) {
             let gpuFilter = /(radeon|amdgpu|nouveau)/;
-            if (!data.hasOwnProperty(chipset) || gpuFlag != gpuFilter.test(chipset))
+            if (!data.hasOwnProperty(chipset) || (gpuFlag != gpuFilter.test(chipset) && sensorType === 'temp'))
                 continue;
 
             let chipsetSensors = data[chipset]
