@@ -114,6 +114,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._querySensors();
 
         this._addTimer();
+        this._updateUI(true);
         this._updateUITimeoutId = Mainloop.timeout_add(250, () => {
             this._updateUI();
             // readd to update queue
@@ -273,8 +274,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         }
     }
 
-    _updateUI(){
-        let needUpdate = false;
+    _updateUI(needUpdate = false){
         for (let sensor of Object.values(this._utils)) {
             if (sensor.available && sensor.updated) {
                 this.debug(sensor + ' updated');
