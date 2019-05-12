@@ -44,7 +44,13 @@ var NvidiaUtil = class extends CommandLineUtil.CommandLineUtil {
     }
 
     get temp() {
-        if(!this._output)
+        let output = [];
+        if(this._output)
+          output.push(...this._output)
+        if(this._error_output)
+          output.push(...this._error_output)
+
+        if(output.length === 0)
             return [];
         let temps = [];
         for (let line of this._output) {

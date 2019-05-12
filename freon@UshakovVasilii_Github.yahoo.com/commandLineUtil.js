@@ -28,6 +28,7 @@ var CommandLineUtil = class {
 
             let childWatch = GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, (pid, status, requestObj) => {
                 let output = [];
+                let error_output = [];
                 let [line, size] = [null, 0];
 
                 while (([line, size] = outReader.read_line(null)) != null && line != null) {
@@ -38,12 +39,13 @@ var CommandLineUtil = class {
 
                 while (([line, size] = errReader.read_line(null)) != null && line != null) {
                     if(line)
-                        output.push(ByteArray.toString(line));
+                        error_output.push(ByteArray.toString(line));
                 }
                 stderr.close(null);
 
                 GLib.source_remove(childWatch);
                 this._output = output;
+                this._error_output = error_output;
                 this._updated = true;
                 callback();
             });
@@ -59,7 +61,7 @@ var CommandLineUtil = class {
     get updated (){
        return this._updated;
     }
- 
+
     set updated (updated){
         this._updated = updated;
     }
