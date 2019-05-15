@@ -40,15 +40,18 @@ var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
         if(!this._output)
             return [];
 
-        // Prep output as one big string for JSON parser
-        let output = this._output.join('');
-
         let data = []
         try {
-            data = JSON.parse(output);
+            data = JSON.parse(this._output.join(''));
         } catch (e) {
+          try {
+            // fix for wrong lm_sensors output
+            // https://github.com/UshakovVasilii/gnome-shell-extension-freon/issues/114#issuecomment-491613545
+            data = JSON.parse(this._output.filter(l => l.trim() !== ',').join(''));
+          } catch (e) {
             global.log(e.toString());
             return [];
+          }
         }
 
         let sensors = [];
