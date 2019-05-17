@@ -47,7 +47,9 @@ var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
           try {
             // fix for wrong lm_sensors output
             // https://github.com/UshakovVasilii/gnome-shell-extension-freon/issues/114#issuecomment-491613545
-            data = JSON.parse(this._output.filter(l => l.trim() !== ',').join(''));
+            let lineRemoved = this._output.filter(l => l.trim() !== ',').join('\n');
+            let errorRemoved = lineRemoved.replace(/ERROR.*Can't read/, "");
+            data = JSON.parse(errorRemoved);
           } catch (e) {
             global.log(e.toString());
             return [];
