@@ -49,7 +49,7 @@ var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
             // https://github.com/UshakovVasilii/gnome-shell-extension-freon/issues/114#issuecomment-491613545
             let lineRemoved = this._output.filter(l => l.trim() !== ',').join('\n');
             let errorRemoved = lineRemoved.replace(/ERROR.*Can't read/, "");
-            errorRemoved = errorRemoved.replace(/ERROR.*I/O error/, "");
+            errorRemoved = errorRemoved.replace(/ERROR.*I\/O error/, "");
             data = JSON.parse(errorRemoved);
           } catch (e) {
             global.log(e.toString());
