@@ -17,6 +17,7 @@ const NvidiaUtil = Me.imports.nvidiaUtil;
 const HddtempUtil = Me.imports.hddtempUtil;
 const SensorsUtil = Me.imports.sensorsUtil;
 const smartctlUtil = Me.imports.smartctlUtil;
+const nvmecliUtil = Me.imports.nvmecliUtil;
 const BumblebeeNvidiaUtil = Me.imports.bumblebeeNvidiaUtil;
 const FreonItem = Me.imports.freonItem;
 
@@ -198,6 +199,9 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
                 break;
             case 'smartctl':
                 this._utils.disks = new smartctlUtil.smartctlUtil();
+                break;
+            case 'nvmecli':
+                this._utils.disks = new nvmecliUtil.nvmecliUtil();
                 break;
         }
     }
