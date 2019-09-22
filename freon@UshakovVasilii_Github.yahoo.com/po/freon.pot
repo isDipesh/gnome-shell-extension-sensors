@@ -134,3 +134,11 @@ msgstr ""
 #: prefs.js:49
 msgid "Right"
 msgstr ""
+
+#: extension.js:479
+msgid "Go to the Freon wiki"
+msgstr ""
+
+#: extension.js:486
+msgid "Sensor Settings"
+msgstr ""
