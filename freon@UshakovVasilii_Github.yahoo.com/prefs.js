@@ -38,7 +38,7 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
 
         this._addComboBox({
             items : {centigrade : "\u00b0C", fahrenheit : "\u00b0F"},
-            key: 'unit', y : i++, x : 2,
+            key: 'unit', y : i++, x : 3,
             label: _('Temperature Unit')
         });
 
@@ -48,20 +48,20 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
             label: _('Position in Panel')
         });
 
-        this._addSwitch({key : 'show-icon-on-panel', y : i++, x : 2,
+        this._addSwitch({key : 'show-icon-on-panel', y : i++, x : 3,
             label : _('Show Icon on Panel')});
 
         this._addSwitch({key : 'show-fan-rpm', y : i, x : 0,
             label : _('Show Fan Speed')});
 
-        this._addSwitch({key : 'show-voltage', y : i++, x : 2,
+        this._addSwitch({key : 'show-voltage', y : i++, x : 3,
             label : _('Show Power Supply Voltage')});
 
         this._addSwitch({key : 'group-temperature', y : i, x : 0,
             label : _('Group Temperature Items'),
             help : _("Works if you have more than three temperature sensors")});
 
-        this._addSwitch({key : 'group-voltage', y : i++, x : 2,
+        this._addSwitch({key : 'group-voltage', y : i++, x : 3,
             label : _('Group Voltage Items'),
             help : _("Works if you have more than three voltage sensors")});
 
@@ -77,7 +77,7 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
                 'nvidia-settings' : _('NVIDIA'),
                 'aticonfig' : _('Catalyst'),
                 'bumblebee-nvidia-smi': _('Bumblebee + NVIDIA') },
-            key: 'gpu-utility', y : i, x : 2,
+            key: 'gpu-utility', y : i, x : 3,
             label: _('Video Card Temperature Utility')
         });
     }
