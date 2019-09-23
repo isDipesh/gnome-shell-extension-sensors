@@ -63,6 +63,12 @@
       <description>Position in Panel ('left', 'center', 'right')</description>
     </key>
 
+    <key name="panel-box-index" type="i">
+      <default>0</default>
+      <summary>Index in panel box</summary>
+      <description>Index within the selected panel box (0: first, 1: second, ..., -1: last)</description>
+    </key>
+
     <key type="b" name="group-temperature">
       <default>true</default>
       <summary>Group temperature menu items</summary>

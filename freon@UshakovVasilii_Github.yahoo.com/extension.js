@@ -106,6 +106,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._addSettingChangedSignal('drive-utility', this._driveUtilityChanged.bind(this));
         this._addSettingChangedSignal('gpu-utility', this._gpuUtilityChanged.bind(this));
         this._addSettingChangedSignal('position-in-panel', this._positionInPanelChanged.bind(this));
+        this._addSettingChangedSignal('panel-box-index', this._positionInPanelChanged.bind(this));
         this._addSettingChangedSignal('group-temperature', this._querySensors.bind(this))
         this._addSettingChangedSignal('group-voltage', this._rerender.bind(this))
 
@@ -161,7 +162,8 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         };
 
         let p = this.positionInPanel;
-        boxes[p].insert_child_at_index(this.container, p == 'right' ? 0 : -1)
+        let i = this._settings.get_int('panel-box-index');
+        boxes[p].insert_child_at_index(this.container, i);
     }
 
     _showIconOnPanelChanged(){
