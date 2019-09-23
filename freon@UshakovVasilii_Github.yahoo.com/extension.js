@@ -635,8 +635,8 @@ function init(extensionMeta) {
 
 function enable() {
     freonMenu = new FreonMenuButton();
-    let positionInPanel = freonMenu.positionInPanel;
-    Main.panel.addToStatusArea('freonMenu', freonMenu, positionInPanel == 'right' ? 0 : -1, positionInPanel);
+    Main.panel.addToStatusArea('freonMenu', freonMenu);
+    freonMenu._positionInPanelChanged();
 }
 
 function disable() {
