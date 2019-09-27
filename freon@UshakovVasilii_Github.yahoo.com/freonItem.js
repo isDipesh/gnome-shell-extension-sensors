@@ -1,10 +1,11 @@
-const St = imports.gi.St;
+const GObject = imports.gi.GObject;
 const PopupMenu = imports.ui.popupMenu;
+const St = imports.gi.St;
 
-var FreonItem = class extends PopupMenu.PopupBaseMenuItem {
+var FreonItem = GObject.registerClass(class FreonItem extends PopupMenu.PopupBaseMenuItem {
 
-    constructor(gIcon, key, label, value, displayName) {
-        super();
+    _init(gIcon, key, label, value, displayName) {
+        super._init();
         this._main = false;
         this._key = key;
         this._gIcon = gIcon;
@@ -43,4 +44,4 @@ var FreonItem = class extends PopupMenu.PopupBaseMenuItem {
     set value(value) {
         this._valueLabel.text = value;
     }
-};
+});
