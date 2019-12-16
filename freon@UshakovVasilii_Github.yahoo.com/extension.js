@@ -93,7 +93,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
             this._createInitialIcon();
         }
 
-        this.actor.add_actor(this._menuLayout);
+        this.add_actor(this._menuLayout);
 
         this._settingChangedSignals = [];
         this._addSettingChangedSignal('update-time', this._updateTimeChanged.bind(this));
