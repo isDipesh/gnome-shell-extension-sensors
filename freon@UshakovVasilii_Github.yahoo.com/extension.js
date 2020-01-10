@@ -1,5 +1,4 @@
 const St = imports.gi.St;
-const Lang = imports.lang;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
@@ -8,15 +7,17 @@ const Mainloop = imports.mainloop;
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
 const UDisks2 = Me.imports.udisks2;
 const AticonfigUtil = Me.imports.aticonfigUtil;
 const NvidiaUtil = Me.imports.nvidiaUtil;
 const HddtempUtil = Me.imports.hddtempUtil;
 const SensorsUtil = Me.imports.sensorsUtil;
 const smartctlUtil = Me.imports.smartctlUtil;
+const nvmecliUtil = Me.imports.nvmecliUtil;
 const BumblebeeNvidiaUtil = Me.imports.bumblebeeNvidiaUtil;
 const FreonItem = Me.imports.freonItem;
 
@@ -47,14 +48,11 @@ function _makeLogFunction(prefix) {
     }
 }
 
-var FreonMenuButton = new Lang.Class({
-    Name: 'FreonMenuButton',
-    Extends: PanelMenu.Button,
+const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extends PanelMenu.Button {
+    _init() {
+        super._init(St.Align.START);
 
-    _init: function(){
-        this.parent(St.Align.START);
-
-        this._settings = Convenience.getSettings();
+        this._settings = ExtensionUtils.getSettings();
 
         var _debugFunc = _makeLogFunction('DEBUG');
         this.debug = this._settings.get_boolean('debug') ? _debugFunc : () => {};
@@ -95,36 +93,38 @@ var FreonMenuButton = new Lang.Class({
             this._createInitialIcon();
         }
 
-        this.actor.add_actor(this._menuLayout);
+        this.add_actor(this._menuLayout);
 
         this._settingChangedSignals = [];
-        this._addSettingChangedSignal('update-time', Lang.bind(this, this._updateTimeChanged));
-        this._addSettingChangedSignal('unit', Lang.bind(this, this._querySensors));
-        this._addSettingChangedSignal('show-icon-on-panel', Lang.bind(this, this._showIconOnPanelChanged));
-        this._addSettingChangedSignal('hot-sensors', Lang.bind(this, this._querySensors));
-        this._addSettingChangedSignal('show-decimal-value', Lang.bind(this, this._querySensors));
-        this._addSettingChangedSignal('show-fan-rpm', Lang.bind(this, this._querySensors));
-        this._addSettingChangedSignal('show-voltage', Lang.bind(this, this._querySensors));
-        this._addSettingChangedSignal('drive-utility', Lang.bind(this, this._driveUtilityChanged));
-        this._addSettingChangedSignal('gpu-utility', Lang.bind(this, this._gpuUtilityChanged));
-        this._addSettingChangedSignal('position-in-panel', Lang.bind(this, this._positionInPanelChanged));
-        this._addSettingChangedSignal('group-temperature', Lang.bind(this, this._querySensors))
-        this._addSettingChangedSignal('group-voltage', Lang.bind(this, this._rerender))
+        this._addSettingChangedSignal('update-time', this._updateTimeChanged.bind(this));
+        this._addSettingChangedSignal('unit', this._querySensors.bind(this));
+        this._addSettingChangedSignal('show-icon-on-panel', this._showIconOnPanelChanged.bind(this));
+        this._addSettingChangedSignal('hot-sensors', this._querySensors.bind(this));
+        this._addSettingChangedSignal('show-decimal-value', this._querySensors.bind(this));
+        this._addSettingChangedSignal('show-fan-rpm', this._querySensors.bind(this));
+        this._addSettingChangedSignal('show-voltage', this._querySensors.bind(this));
+        this._addSettingChangedSignal('drive-utility', this._driveUtilityChanged.bind(this));
+        this._addSettingChangedSignal('gpu-utility', this._gpuUtilityChanged.bind(this));
+        this._addSettingChangedSignal('position-in-panel', this._positionInPanelChanged.bind(this));
+        this._addSettingChangedSignal('panel-box-index', this._positionInPanelChanged.bind(this));
+        this._addSettingChangedSignal('group-temperature', this._querySensors.bind(this))
+        this._addSettingChangedSignal('group-voltage', this._rerender.bind(this))
 
-        this.connect('destroy', Lang.bind(this, this._onDestroy));
+        this.connect('destroy', this._onDestroy.bind(this));
 
         // don't postprone the first call by update-time.
         this._querySensors();
 
         this._addTimer();
-        this._updateUITimeoutId = Mainloop.timeout_add(250, Lang.bind(this, function (){
+        this._updateUI(true);
+        this._updateUITimeoutId = Mainloop.timeout_add(250, () => {
             this._updateUI();
             // readd to update queue
             return true;
-        }));
-    },
+        });
+    }
 
-    _createHotItem: function(s, showIcon, gicon){
+    _createHotItem(s, showIcon, gicon){
         if(showIcon){
             let i = new St.Icon({ style_class: 'system-status-icon'});
             this._hotIcons[s] = i;
@@ -133,25 +133,25 @@ var FreonMenuButton = new Lang.Class({
             this._menuLayout.add(i);
         }
         let l = new St.Label({
-            text: '\u2026', /* ... */
+            text: '\u26a0',  // ⚠, warning
             y_expand: true,
             y_align: Clutter.ActorAlign.CENTER});
         this._hotLabels[s] = l;
         this._menuLayout.add(l);
-    },
+    }
 
-    _createInitialIcon: function() {
+    _createInitialIcon() {
         this._initialIcon = new St.Icon({ style_class: 'system-status-icon'});
         this._initialIcon.gicon = this._sensorIcons['gpu-temperature'];
         this._menuLayout.add(this._initialIcon);
-    },
+    }
 
-    _rerender : function(){
+    _rerender(){
         this._needRerender = true;
         this._querySensors();
-    },
+    }
 
-    _positionInPanelChanged : function(){
+    _positionInPanelChanged(){
         this.container.get_parent().remove_actor(this.container);
 
         // small HACK with private boxes :)
@@ -162,10 +162,11 @@ var FreonMenuButton = new Lang.Class({
         };
 
         let p = this.positionInPanel;
-        boxes[p].insert_child_at_index(this.container, p == 'right' ? 0 : -1)
-    },
+        let i = this._settings.get_int('panel-box-index');
+        boxes[p].insert_child_at_index(this.container, i);
+    }
 
-    _showIconOnPanelChanged : function(){
+    _showIconOnPanelChanged(){
         if(this._settings.get_boolean('show-icon-on-panel')) {
             let index = 0;
             for(let k in this._hotLabels){
@@ -180,38 +181,41 @@ var FreonMenuButton = new Lang.Class({
                 this._hotIcons[k].destroy();
             this._hotIcons = {};
         }
-    },
+    }
 
-    _driveUtilityChanged : function(){
+    _driveUtilityChanged(){
         this._destroyDriveUtility();
         this._initDriveUtility();
         this._querySensors();
-    },
+    }
 
-    _initDriveUtility : function(){
+    _initDriveUtility(){
         switch(this._settings.get_string('drive-utility')){
             case 'hddtemp':
                 this._utils.disks = new HddtempUtil.HddtempUtil();
                 break;
             case 'udisks2':
-                this._utils.disks = new UDisks2.UDisks2(Lang.bind(this, function() {
+                this._utils.disks = new UDisks2.UDisks2(() => {
                     // this._updateDisplay(); we cannot change actor in background thread #74
-                }));
+                });
                 break;
             case 'smartctl':
                 this._utils.disks = new smartctlUtil.smartctlUtil();
                 break;
+            case 'nvmecli':
+                this._utils.disks = new nvmecliUtil.nvmecliUtil();
+                break;
         }
-    },
+    }
 
-    _destroyDriveUtility : function(){
+    _destroyDriveUtility(){
         if(this._utils.disks){
             this._utils.disks.destroy();
             delete this._utils.disks;
         }
-    },
+    }
 
-    _initGpuUtility : function(){
+    _initGpuUtility(){
         switch(this._settings.get_string('gpu-utility')){
             case 'nvidia-settings':
                 this._utils.gpu = new NvidiaUtil.NvidiaUtil();
@@ -223,39 +227,39 @@ var FreonMenuButton = new Lang.Class({
                 this._utils.gpu = new BumblebeeNvidiaUtil.BumblebeeNvidiaUtil();
                 break;
         }
-    },
+    }
 
-    _destroyGpuUtility : function(){
+    _destroyGpuUtility(){
         if(this._utils.gpu){
             this._utils.gpu.destroy();
             delete this._utils.gpu;
         }
-    },
+    }
 
-    _gpuUtilityChanged : function(){
+    _gpuUtilityChanged(){
         this._destroyGpuUtility();
         this._initGpuUtility();
         this._querySensors();
-    },
+    }
 
-    _updateTimeChanged : function(){
+    _updateTimeChanged(){
         Mainloop.source_remove(this._timeoutId);
         this._addTimer();
-    },
+    }
 
-    _addTimer : function(){
-        this._timeoutId = Mainloop.timeout_add_seconds(this._settings.get_int('update-time'), Lang.bind(this, function (){
+    _addTimer(){
+        this._timeoutId = Mainloop.timeout_add_seconds(this._settings.get_int('update-time'), () => {
             this._querySensors();
             // readd to update queue
             return true;
-        }));
-    },
+        });
+    }
 
-    _addSettingChangedSignal : function(key, callback){
+    _addSettingChangedSignal(key, callback){
         this._settingChangedSignals.push(this._settings.connect('changed::' + key, callback));
-    },
+    }
 
-    _onDestroy: function(){
+    _onDestroy(){
         this._destroyDriveUtility();
         this._destroyGpuUtility();
         Mainloop.source_remove(this._timeoutId);
@@ -264,20 +268,19 @@ var FreonMenuButton = new Lang.Class({
         for (let signal of this._settingChangedSignals){
             this._settings.disconnect(signal);
         };
-    },
+    }
 
-    _querySensors: function(){
+    _querySensors(){
         for (let sensor of Object.values(this._utils)) {
             if (sensor.available) {
-                sensor.execute(Lang.bind(this,function(){
+                sensor.execute(() => {
                     // we cannot change actor in background thread #74
-                }));
+                });
             }
         }
-    },
+    }
 
-    _updateUI: function(){
-        let needUpdate = false;
+    _updateUI(needUpdate = false){
         for (let sensor of Object.values(this._utils)) {
             if (sensor.available && sensor.updated) {
                 this.debug(sensor + ' updated');
@@ -289,9 +292,9 @@ var FreonMenuButton = new Lang.Class({
             this._updateDisplay(); // #74
             this.debug('update display');
         }
-    },
+    }
 
-    _fixNames: function(sensors){
+    _fixNames(sensors){
         let names = [];
         for (let s of sensors){
             if(s.type == 'separator' ||
@@ -310,9 +313,9 @@ var FreonMenuButton = new Lang.Class({
             }
             names.push(name);
         }
-    },
+    }
 
-    _updateDisplay: function(){
+    _updateDisplay(){
         let gpuTempInfo = this._utils.sensors.gpu;
 
         if (this._utils.gpu && this._utils.gpu.available)
@@ -416,6 +419,9 @@ var FreonMenuButton = new Lang.Class({
 
             this._fixNames(sensors);
 
+            for (let k in this._hotLabels)
+                this._hotLabels[k].set_text('\u26a0');  // ⚠, warning
+
             for (let s of sensors)
                 if(s.type != 'separator') {
                     let l = this._hotLabels[s.key || s.label];
@@ -465,9 +471,9 @@ var FreonMenuButton = new Lang.Class({
             this.menu.addMenuItem(item);
             this._appendStaticMenuItems();
         }
-    },
+    }
 
-    _appendStaticMenuItems : function(){
+    _appendStaticMenuItems(){
         // separator
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
@@ -484,9 +490,9 @@ var FreonMenuButton = new Lang.Class({
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
         });
         this.menu.addMenuItem(settings);
-    },
+    }
 
-    _appendMenuItems : function(sensors){
+    _appendMenuItems(sensors){
         this._lastSensorsCount = sensors.length;
         this._sensorMenuItems = {};
         let needGroupTemperature = this._settings.get_boolean('group-temperature');
@@ -515,7 +521,7 @@ var FreonMenuButton = new Lang.Class({
             } else {
                 let key = s.key || s.label;
                 let item = new FreonItem.FreonItem(this._sensorIcons[s.type], key, s.label, s.value, s.displayName || undefined);
-                item.connect('activate', Lang.bind(this, function (self) {
+                item.connect('activate', (self) => {
                     let l = this._hotLabels[self.key];
                     let hotSensors = this._settings.get_strv('hot-sensors');
                     if(l){
@@ -560,7 +566,7 @@ var FreonMenuButton = new Lang.Class({
                         function(item, pos) {
                             return hotSensors.indexOf(item) == pos;
                         }));
-                }));
+                });
                 if (this._hotLabels[key]) {
                     item.main = true;
                     if(this._hotIcons[key])
@@ -595,14 +601,14 @@ var FreonMenuButton = new Lang.Class({
             }
         }
         this._appendStaticMenuItems();
-    },
+    }
 
 
-    _toFahrenheit: function(c){
+    _toFahrenheit(c){
         return ((9/5)*c+32);
-    },
+    }
 
-    _formatTemp: function(value) {
+    _formatTemp(value) {
         if(value === null)
             return 'N/A';
         if (this._settings.get_string('unit')=='fahrenheit'){
@@ -610,12 +616,11 @@ var FreonMenuButton = new Lang.Class({
         }
         let format = '%.1f';
         if (!this._settings.get_boolean('show-decimal-value')){
-            //ret = Math.round(value);
-            format = '%d';
+            format = '%.0f';
         }
         format += '%s';
         return format.format(value, (this._settings.get_string('unit')=='fahrenheit') ? "\u00b0F" : "\u00b0C");
-    },
+    }
 
     get positionInPanel(){
         return this._settings.get_string('position-in-panel');
@@ -625,13 +630,13 @@ var FreonMenuButton = new Lang.Class({
 let freonMenu;
 
 function init(extensionMeta) {
-    Convenience.initTranslations();
+    ExtensionUtils.initTranslations();
 }
 
 function enable() {
     freonMenu = new FreonMenuButton();
-    let positionInPanel = freonMenu.positionInPanel;
-    Main.panel.addToStatusArea('freonMenu', freonMenu, positionInPanel == 'right' ? 0 : -1, positionInPanel);
+    Main.panel.addToStatusArea('freonMenu', freonMenu);
+    freonMenu._positionInPanelChanged();
 }
 
 function disable() {

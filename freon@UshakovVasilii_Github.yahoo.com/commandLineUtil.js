@@ -1,17 +1,15 @@
 const ByteArray = imports.byteArray;
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
-var CommandLineUtil = new Lang.Class({
-    Name: 'CommandLineUtil',
+var CommandLineUtil = class {
 
-    _init: function(){
+    constructor(){
         this._argv = null;
         this._updated = false;
-    },
+    }
 
-    execute: function(callback) {
+    execute(callback) {
         try{
             this._callback = callback;
             let [exit, pid, stdinFd, stdoutFd, stderrFd] =
@@ -28,8 +26,9 @@ var CommandLineUtil = new Lang.Class({
 
             GLib.close(stdinFd);
 
-            let childWatch = GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, Lang.bind(this, function(pid, status, requestObj) {
+            let childWatch = GLib.child_watch_add(GLib.PRIORITY_DEFAULT, pid, (pid, status, requestObj) => {
                 let output = [];
+                let error_output = [];
                 let [line, size] = [null, 0];
 
                 while (([line, size] = outReader.read_line(null)) != null && line != null) {
@@ -40,34 +39,35 @@ var CommandLineUtil = new Lang.Class({
 
                 while (([line, size] = errReader.read_line(null)) != null && line != null) {
                     if(line)
-                        output.push(ByteArray.toString(line));
+                        error_output.push(ByteArray.toString(line));
                 }
                 stderr.close(null);
 
                 GLib.source_remove(childWatch);
                 this._output = output;
+                this._error_output = error_output;
                 this._updated = true;
                 callback();
-            }));
+            });
         } catch(e){
             global.log(e.toString());
         }
-    },
+    }
 
     get available(){
         return this._argv != null;
-    },
+    }
 
     get updated (){
        return this._updated;
-    },
- 
+    }
+
     set updated (updated){
         this._updated = updated;
-    },
+    }
 
-    destroy: function(){
+    destroy(){
         this._argv = null;
     }
 
-});
+};

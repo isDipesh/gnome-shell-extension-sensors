@@ -1,18 +1,15 @@
-const Lang = imports.lang;
 const GLib = imports.gi.GLib;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const CommandLineUtil = Me.imports.commandLineUtil;
 
-var smartctlUtil = new Lang.Class({
-    Name: 'smartctlUtil',
-    Extends: CommandLineUtil.CommandLineUtil,
+var smartctlUtil = class extends CommandLineUtil.CommandLineUtil {
 
-    _init: function() {
-        this.parent();
+    constructor() {
+        super();
         let path = GLib.find_program_in_path('smartctl');
         this._argv = path ? [path, '-x', '/dev/nvme0'] : null;
-    },
+    }
 
     get temp() {
         if(!this._output)
@@ -42,11 +39,10 @@ var smartctlUtil = new Lang.Class({
         }
         return sensors;
 
-    },
+    }
 
     get available(){
         return true;
-    },
+    }
 
-});
-
+};
