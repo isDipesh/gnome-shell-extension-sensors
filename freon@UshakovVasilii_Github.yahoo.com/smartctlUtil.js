@@ -1,48 +1,51 @@
 const GLib = imports.gi.GLib;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const CommandLineUtil = Me.imports.commandLineUtil;
+const ByteArray = imports.byteArray;
+function getSmartData (argv){
+    const smartctl = GLib.find_program_in_path('smartctl')
+    return JSON.parse(ByteArray.toString( GLib.spawn_command_line_sync(`${smartctl} ${argv} -j`)[1] ))
+}
 
-var smartctlUtil = class extends CommandLineUtil.CommandLineUtil {
-
-    constructor() {
-        super();
-        let path = GLib.find_program_in_path('smartctl');
-        this._argv = path ? [path, '-x', '/dev/nvme0'] : null;
-    }
-
-    get temp() {
-        if(!this._output)
-            return [];
-
-        let smartctlOutput = [];
-        smartctlOutput = this._output;
-
-        let sensors = [];
-
-        let slabel="Temperature Sensor";
-        for (let line of smartctlOutput) {
-            let matchModel = /Model Number:/.exec( line.toString() );
-            if(matchModel){
-               let sline=line.split(/\s+/);
-               slabel=sline.slice(2).join(" ");
-            }
-            //let line = "Temperature Sensor 1:               37 Celsius"
-            let match = /Temperature Sensor \d: *\w\d Celsius/.exec( line.toString() );
-            //let match = /Use smartctl.*/.exec( line.toString() );
-            //let match = /.*\[Temperature Sensor \d: .*\d Celcius.*/.exec(line.toString());
-            if(match){
-               let sline=line.split(/\s+/);
-               let sensor = { label: slabel+" "+sline[2][0], temp: parseFloat(sline[3]) };
-               sensors.push(sensor);
-            }
-        }
-        return sensors;
-
+var smartctlUtil  = class {
+    constructor(callback) {
+        this._smartDevices = [];
+        try {
+            this._smartDevices = getSmartData("--scan")["devices"]
+	    global.log('[FREON] test devices: ' + e);
+        } catch (e) {
+            global.log('[FREON] Unable to find smart devices: ' + e);
+        }        
+        this._updated = true;
     }
 
     get available(){
-        return true;
+        return this._smartDevices.length > 0;
+    }
+
+    get updated (){
+       return this._updated;
+    }
+
+    set updated (updated){
+        this._updated = updated;
+    }
+
+    get temp() {
+        return this._smartDevices.map(device => {
+            return {
+                label: getSmartData(`--info ${device["name"]}`)["model_name"],
+                temp: parseFloat(getSmartData(`--attributes ${device["name"]}`).temperature.current)
+            }
+        })
+    }
+
+    destroy(callback) {
+        this._smartDevices = [];
+    }
+
+    execute(callback) {
+        this._updated = true;
     }
 
 };
