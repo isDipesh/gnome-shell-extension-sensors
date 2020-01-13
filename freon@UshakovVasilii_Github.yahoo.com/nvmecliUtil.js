@@ -31,13 +31,22 @@ var nvmecliUtil  = class {
     }
 
     get temp() {
-        return this._nvmeDevices.map(device => {
-            return {
-                label: device["ModelNumber"],
-                temp: parseFloat(getNvmeData(`smart-log ${device["DevicePath"]}`).temperature) - 273.15    
+        let sensors = [];
+        for (let device of this._nvmeDevices) {
+            var smart_log = getNvmeData(`smart-log ${device["DevicePath"]}`);
+	    if( smart_log.hasOwnProperty('temperature_sensor_2') ){
+	        sensors.push({ label: device["ModelNumber"] + " S1",
+                               temp: parseFloat(smart_log.temperature_sensor_1) - 273.15 });
+                sensors.push({ label: device["ModelNumber"] + " S2",
+                               temp: parseFloat(smart_log.temperature_sensor_2) - 273.15 });
+                }
+            else{
+                 sensors.push({ label: device["ModelNumber"],
+                                temp: parseFloat(smart_log.temperature) - 273.15 });
             }
-        })
-    }
+       }
+       return sensors;
+   }
 
     destroy(callback) {
         this._nvmeDevices = [];
