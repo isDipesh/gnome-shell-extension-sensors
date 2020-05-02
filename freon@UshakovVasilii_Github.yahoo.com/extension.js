@@ -487,7 +487,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         let settings = new PopupMenu.PopupBaseMenuItem();
         settings.actor.add(new St.Label({ text: _("Sensor Settings") }), { expand: true, x_fill: false });
         settings.connect('activate', function () {
-            Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
+            Util.spawn(["gnome-extensions", "prefs", Me.metadata.uuid]);
         });
         this.menu.addMenuItem(settings);
     }
