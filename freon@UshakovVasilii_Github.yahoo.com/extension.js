@@ -69,12 +69,12 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._initDriveUtility();
         this._initGpuUtility();
 
-        let temperatureIcon = Gio.icon_new_for_string(Me.path + '/icons/freon-temperature-symbolic.svg');
+        let temperatureIcon = Gio.icon_new_for_string(Me.path + '/icons/material-icons/material-temperature-symbolic.svg');
         this._sensorIcons = {
             'temperature' : temperatureIcon,
             'temperature-average' : temperatureIcon,
             'temperature-maximum' : temperatureIcon,
-            'gpu-temperature' : Gio.icon_new_for_string(Me.path + '/icons/freon-gpu-temperature-symbolic.svg'),
+            'gpu-temperature' : Gio.icon_new_for_string(Me.path + '/icons/material-icons/material-gpu-temperature-symbolic.svg'),
             'drive-temperature' : Gio.icon_new_for_string('drive-harddisk-symbolic'),
             'voltage' : Gio.icon_new_for_string(Me.path + '/icons/freon-voltage-symbolic.svg'),
             'fan' : Gio.icon_new_for_string(Me.path + '/icons/freon-fan-symbolic.svg')
