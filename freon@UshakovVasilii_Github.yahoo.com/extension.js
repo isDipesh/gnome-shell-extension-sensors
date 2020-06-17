@@ -136,6 +136,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
             text: '\u26a0',  // ⚠, warning
             y_expand: true,
             y_align: Clutter.ActorAlign.CENTER});
+        l.set_style_class_name(showIcon ? 'freon-panel-icon-label' : 'freon-panel-no-icon-label');
         this._hotLabels[s] = l;
         this._menuLayout.add(l);
     }
@@ -167,7 +168,8 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
     }
 
     _showIconOnPanelChanged(){
-        if(this._settings.get_boolean('show-icon-on-panel')) {
+        let showIcon = this._settings.get_boolean('show-icon-on-panel');
+        if (showIcon) {
             let index = 0;
             for(let k in this._hotLabels){
                 let i = new St.Icon({ style_class: 'system-status-icon'});
@@ -181,6 +183,8 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
                 this._hotIcons[k].destroy();
             this._hotIcons = {};
         }
+        for (let l in this._hotLabels)
+            this._hotLabels[l].set_style_class_name(showIcon ? 'freon-panel-icon-label' : 'freon-panel-no-icon-label');
     }
 
     _driveUtilityChanged(){
