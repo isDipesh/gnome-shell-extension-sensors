@@ -14,6 +14,12 @@
       <summary>Unit</summary>
       <description>The unit ('centigrade' or 'fahrenheit') the extension should display the temperature in</description>
     </key>
+    
+    <key type="b" name="show-degrees-on-panel">
+      <default>true</default>
+      <summary>Show degrees celsius/fahrenheit on Panel</summary>
+      <description>Show degrees celsius/fahrenheit on Panel</description>
+    </key>
 
     <key type="b" name="show-icon-on-panel">
       <default>true</default>
