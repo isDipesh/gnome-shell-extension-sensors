@@ -98,6 +98,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._settingChangedSignals = [];
         this._addSettingChangedSignal('update-time', this._updateTimeChanged.bind(this));
         this._addSettingChangedSignal('unit', this._querySensors.bind(this));
+        this._addSettingChangedSignal('show-degrees-on-panel', this._updateUI.bind(this));
         this._addSettingChangedSignal('show-icon-on-panel', this._showIconOnPanelChanged.bind(this));
         this._addSettingChangedSignal('hot-sensors', this._querySensors.bind(this));
         this._addSettingChangedSignal('show-decimal-value', this._querySensors.bind(this));
@@ -623,7 +624,12 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
             format = '%.0f';
         }
         format += '%s';
-        return format.format(value, (this._settings.get_string('unit')=='fahrenheit') ? "\u00b0F" : "\u00b0C");
+        
+        if(this._settings.get_boolean('show-degrees-on-panel')){
+            return format.format(value, (this._settings.get_string('unit')=='fahrenheit') ? "\u00b0F" : "\u00b0C" );
+        } else {
+            return format.format(value, "");
+        }
     }
 
     get positionInPanel(){

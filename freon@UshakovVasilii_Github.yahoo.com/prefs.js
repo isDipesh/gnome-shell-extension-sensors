@@ -51,7 +51,10 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
         let panelBoxIndex = Gtk.SpinButton.new_with_range (-1, 20, 1);
         this.attach(panelBoxIndex, 2, i, 1, 1);
         this._settings.bind('panel-box-index', panelBoxIndex, 'value', Gio.SettingsBindFlags.DEFAULT);
-
+            
+        this._addSwitch({key : 'show-degrees-on-panel', y : i++, x : 3,
+            label : _('Show \u00b0C/\u00b0F on Panel')});
+            
         this._addSwitch({key : 'show-icon-on-panel', y : i++, x : 3,
             label : _('Show Icon on Panel')});
 
