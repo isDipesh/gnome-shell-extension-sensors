@@ -353,7 +353,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
             let sum = 0;
             let max = 0;
             for (let i of tempInfo){
-                if(i.temp !== null){
+                if(i.temp !== null && i.temp >= 0){
                     total++;
     	            sum += i.temp;
     	            if (i.temp > max)
