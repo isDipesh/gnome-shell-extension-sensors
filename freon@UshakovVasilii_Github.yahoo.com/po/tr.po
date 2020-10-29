@@ -1,0 +1,149 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Freon\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-10-06 17:05-0300\n"
+"PO-Revision-Date: 2020-10-29 16:21+0300\n"
+"Language-Team: Turkish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.1\n"
+"Last-Translator: Muha Aliss <muhaaliss@pm.me>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: tr\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: bumblebeeNvidiaUtil.js:75 prefs.js:82
+msgid "Bumblebee + NVIDIA"
+msgstr "Bumblebee + NVIDIA"
+
+#: extension.js:319
+msgid "Average"
+msgstr "Ortalama"
+
+#: extension.js:320
+msgid "Maximum"
+msgstr "Maksimum"
+
+#: extension.js:341
+#, javascript-format
+msgid "%drpm"
+msgstr "%drpm"
+
+#: extension.js:350
+#, javascript-format
+msgid "%s%.2fV"
+msgstr "%s%.2fV"
+
+#: extension.js:396
+msgid "Please run sensors-detect as root."
+msgstr "Lütfen sensör-algılamayı yönetici olarak çalıştırın."
+
+#: extension.js:397
+msgid ""
+"Please install lm_sensors.\n"
+"If this doesn't help, click here to report with your sensors output!"
+msgstr ""
+"Lütfen lm_sensors yükleyin.\n"
+"Bu işe yaramazsa, sensör çıktılarınızla raporlamak için burayı tıklayın!"
+
+#: extension.js:488
+msgid "Temperature Sensors"
+msgstr "Sıcaklık sensörleri"
+
+#: extension.js:495
+msgid "Voltage"
+msgstr "Voltaj"
+
+#: extension.js:509
+msgid "Sensors Settings"
+msgstr "Sensör ayarları"
+
+#: prefs.js:33
+msgid "Poll Sensors Every (sec)"
+msgstr ""
+
+#: prefs.js:39
+msgid "Show Decimal Value"
+msgstr "Ondalık değeri göster"
+
+#: prefs.js:40
+msgid "Show one digit after decimal"
+msgstr "Ondalıktan sonra bir rakam göster"
+
+#: prefs.js:45
+msgid "Temperature Unit"
+msgstr "Sıcaklık birimi"
+
+#: prefs.js:51
+msgid "Position in Panel"
+msgstr "Paneldeki konum"
+
+#: prefs.js:55
+msgid "Show Icon on Panel"
+msgstr "Panelde simgeyi göster"
+
+#: prefs.js:58
+msgid "Show Fan Speed"
+msgstr "Fan hızını göster"
+
+#: prefs.js:61
+msgid "Show Power Supply Voltage"
+msgstr "Güç kaynağı voltajını göster"
+
+#: prefs.js:64
+msgid "Group Temperature Items"
+msgstr "Sıcaklık grubu öğeleri"
+
+#: prefs.js:65
+msgid "Works if you have more than three temperature sensors"
+msgstr "Üçten fazla sıcaklık sensörünüz varsa çalışır"
+
+#: prefs.js:68
+msgid "Group Voltage Items"
+msgstr "Voltaj grubu öğeleri"
+
+#: prefs.js:69
+msgid "Works if you have more than three voltage sensors"
+msgstr "Üçten fazla voltaj sensörünüz varsa çalışır"
+
+#: prefs.js:74
+msgid "HDD/SSD Temperature Utility"
+msgstr "HDD/SSD sıcaklık yardımcısı"
+
+#: prefs.js:79
+msgid "None"
+msgstr "Yok"
+
+#: prefs.js:80
+msgid "NVIDIA"
+msgstr "NVIDIA"
+
+#: prefs.js:81
+msgid "Catalyst"
+msgstr "Catalyst"
+
+#: prefs.js:84
+msgid "Video Card Temperature Utility"
+msgstr "Ekran kartı sıcaklık yardımcısı"
+
+#: prefs.js:49
+msgid "Left"
+msgstr "Sol"
+
+#: prefs.js:49
+msgid "Center"
+msgstr "Orta"
+
+#: prefs.js:49
+msgid "Right"
+msgstr "Sağ"
+
+#: extension.js:479
+msgid "Go to the Freon wiki"
+msgstr "Freon wiki'ye git"
+
+#: extension.js:486
+msgid "Sensor Settings"
+msgstr "Sensör ayarları"
