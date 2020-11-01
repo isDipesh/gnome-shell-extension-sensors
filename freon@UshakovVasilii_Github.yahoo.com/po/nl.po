@@ -1,0 +1,148 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-10-06 17:05-0300\n"
+"PO-Revision-Date: 2020-11-01 14:11+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.1\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl\n"
+
+#: bumblebeeNvidiaUtil.js:75 prefs.js:82
+msgid "Bumblebee + NVIDIA"
+msgstr "Bumblebee + NVIDIA"
+
+#: extension.js:319
+msgid "Average"
+msgstr "Gemiddeld"
+
+#: extension.js:320
+msgid "Maximum"
+msgstr "Maximaal"
+
+#: extension.js:341
+#, javascript-format
+msgid "%drpm"
+msgstr "%drpm"
+
+#: extension.js:350
+#, javascript-format
+msgid "%s%.2fV"
+msgstr "%s%.2fV"
+
+#: extension.js:396
+msgid "Please run sensors-detect as root."
+msgstr "Voer sensors-detect uit als administrator (root)."
+
+#: extension.js:397
+msgid ""
+"Please install lm_sensors.\n"
+"If this doesn't help, click here to report with your sensors output!"
+msgstr ""
+"Installeer lm_sensors.\n"
+"Als dat niet helpt, klik dan hier om een rapportage op te maken!"
+
+#: extension.js:488
+msgid "Temperature Sensors"
+msgstr "Temperatuursensors"
+
+#: extension.js:495
+msgid "Voltage"
+msgstr "Voltage"
+
+#: extension.js:509
+msgid "Sensors Settings"
+msgstr "Sensorinstellingen"
+
+#: prefs.js:33
+msgid "Poll Sensors Every (sec)"
+msgstr "Sensors peilen, elke... (in sec.)"
+
+#: prefs.js:39
+msgid "Show Decimal Value"
+msgstr "Decimale waarde tonen"
+
+#: prefs.js:40
+msgid "Show one digit after decimal"
+msgstr "Eén getal achter de komma"
+
+#: prefs.js:45
+msgid "Temperature Unit"
+msgstr "Temperatuureenheid"
+
+#: prefs.js:51
+msgid "Position in Panel"
+msgstr "Positie op paneel"
+
+#: prefs.js:55
+msgid "Show Icon on Panel"
+msgstr "Pictogram tonen op paneel"
+
+#: prefs.js:58
+msgid "Show Fan Speed"
+msgstr "Ventilatorsnelheid tonen"
+
+#: prefs.js:61
+msgid "Show Power Supply Voltage"
+msgstr "Netstroomvoltage tonen"
+
+#: prefs.js:64
+msgid "Group Temperature Items"
+msgstr "Temperatuureenheden groeperen"
+
+#: prefs.js:65
+msgid "Works if you have more than three temperature sensors"
+msgstr "Werkt alleen als je meer dan drie temperatuursensors hebt"
+
+#: prefs.js:68
+msgid "Group Voltage Items"
+msgstr "Voltage-items groeperen"
+
+#: prefs.js:69
+msgid "Works if you have more than three voltage sensors"
+msgstr "Werkt alleen als je meer dan drie voltagesensors hebt"
+
+#: prefs.js:74
+msgid "HDD/SSD Temperature Utility"
+msgstr "HDD-/SSD-temperatuurhulpmiddel"
+
+#: prefs.js:79
+msgid "None"
+msgstr "Geen"
+
+#: prefs.js:80
+msgid "NVIDIA"
+msgstr "NVIDIA"
+
+#: prefs.js:81
+msgid "Catalyst"
+msgstr "Catalyst"
+
+#: prefs.js:84
+msgid "Video Card Temperature Utility"
+msgstr "Videokaarttemperatuurhulpmiddel"
+
+#: prefs.js:49
+msgid "Left"
+msgstr "Links"
+
+#: prefs.js:49
+msgid "Center"
+msgstr "Midden"
+
+#: prefs.js:49
+msgid "Right"
+msgstr "Rechts"
+
+#: extension.js:479
+msgid "Go to the Freon wiki"
+msgstr "Open de Freon-wiki"
+
+#: extension.js:486
+msgid "Sensor Settings"
+msgstr "Sensorinstellingen"
