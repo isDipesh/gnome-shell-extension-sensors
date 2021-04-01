@@ -130,7 +130,5 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
 });
 
 function buildPrefsWidget() {
-    let w = new FreonPrefsWidget();
-    w.show_all();
-    return w;
+    return new FreonPrefsWidget();
 }
