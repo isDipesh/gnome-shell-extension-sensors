@@ -12,6 +12,30 @@ var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
         this._argv = path ? [path, '-A', '-j'] : null;
     }
 
+    // Avoid parsing the data more than once.
+    execute(callback) {
+        super.execute(() => {
+            let data = [];
+            try {
+                data = JSON.parse(this._output.join(''));
+            } catch (e) {
+                try {
+                    // fix for wrong lm_sensors output
+                    // https://github.com/UshakovVasilii/gnome-shell-extension-freon/issues/114#issuecomment-491613545
+                    let lineRemoved = this._output.filter(l => l.trim() !== ',').join('\n');
+                    let errorRemoved = lineRemoved.replace(/ERROR.*Can't read/, "");
+                        errorRemoved = errorRemoved.replace(/ERROR.*I\/O error/, "");
+                        data = JSON.parse(errorRemoved);
+                    } catch (e) {
+                        global.log(e.toString());
+                        return [];
+                    }
+            }
+            this._data = data;
+            callback();
+        });
+    }
+
     get temp() {
         return this._parseGenericSensorsOutput(/^temp\d+_input/, 'temp');
     }
@@ -37,25 +61,10 @@ var SensorsUtil = class extends CommandLineUtil.CommandLineUtil {
     }
 
   _parseSensorsOutput(sensorFilter, sensorType, gpuFlag) {
-        if(!this._output)
+        if(!this._data)
             return [];
 
-        let data = []
-        try {
-            data = JSON.parse(this._output.join(''));
-        } catch (e) {
-          try {
-            // fix for wrong lm_sensors output
-            // https://github.com/UshakovVasilii/gnome-shell-extension-freon/issues/114#issuecomment-491613545
-            let lineRemoved = this._output.filter(l => l.trim() !== ',').join('\n');
-            let errorRemoved = lineRemoved.replace(/ERROR.*Can't read/, "");
-            errorRemoved = errorRemoved.replace(/ERROR.*I\/O error/, "");
-            data = JSON.parse(errorRemoved);
-          } catch (e) {
-            global.log(e.toString());
-            return [];
-          }
-        }
+        const data = this._data;
 
         let sensors = [];
         for (var chipset in data) {
