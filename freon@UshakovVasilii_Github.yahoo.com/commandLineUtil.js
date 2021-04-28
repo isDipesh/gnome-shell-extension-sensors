@@ -26,8 +26,8 @@ var CommandLineUtil = class {
                 } catch (e) {
                     logError(e);
                 } finally {
-                    this._updated = true;
                     callback();
+                    this._updated = true;
                 }
             });
         } catch(e){
