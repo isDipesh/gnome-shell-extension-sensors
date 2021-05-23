@@ -111,7 +111,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._addSettingChangedSignal('group-temperature', this._querySensors.bind(this))
         this._addSettingChangedSignal('group-voltage', this._rerender.bind(this))
 
-        this.connect('destroy', this._onDestroy.bind(this));
+        this.connect('destroy', this._onButtonDestroy.bind(this));
 
         // don't postprone the first call by update-time.
         this._querySensors();
@@ -264,7 +264,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._settingChangedSignals.push(this._settings.connect('changed::' + key, callback));
     }
 
-    _onDestroy(){
+    _onButtonDestroy(){
         this._destroyDriveUtility();
         this._destroyGpuUtility();
         Mainloop.source_remove(this._timeoutId);
