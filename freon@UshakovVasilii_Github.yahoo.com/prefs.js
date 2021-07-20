@@ -84,9 +84,13 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
                 'nvidia-settings' : _('NVIDIA'),
                 'aticonfig' : _('Catalyst'),
                 'bumblebee-nvidia-smi': _('Bumblebee + NVIDIA') },
-            key: 'gpu-utility', y : i, x : 3,
+            key: 'gpu-utility', y : i++, x : 3,
             label: _('Video Card Temperature Utility')
         });
+
+        this._addSwitch({key : 'show-liquidctl', y : i++, x : 3,
+            label : _('Show liquidctl Sensors'),
+            help : _('Show data from liquidctl v1.7.0 or later')});
     }
 
     _addSwitch(params){

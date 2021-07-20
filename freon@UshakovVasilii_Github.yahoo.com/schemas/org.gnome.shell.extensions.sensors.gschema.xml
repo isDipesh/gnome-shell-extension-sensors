@@ -63,6 +63,12 @@
       <description>Utility for detect video card temperature ('none', 'nvidia-settings' or 'aticonfig')</description>
     </key>
 
+    <key type="b" name="show-liquidctl">
+      <default>false</default>
+      <summary>Show liquidctl sensors</summary>
+      <description>Show data from liquidctl v1.7.0 or later</description>
+    </key>
+
     <key type="s" name="position-in-panel">
       <default>'right'</default>
       <summary>Position in Panel</summary>

@@ -16,6 +16,7 @@ const AticonfigUtil = Me.imports.aticonfigUtil;
 const NvidiaUtil = Me.imports.nvidiaUtil;
 const HddtempUtil = Me.imports.hddtempUtil;
 const SensorsUtil = Me.imports.sensorsUtil;
+const liquidctlUtil = Me.imports.liquidctlUtil;
 const smartctlUtil = Me.imports.smartctlUtil;
 const nvmecliUtil = Me.imports.nvmecliUtil;
 const BumblebeeNvidiaUtil = Me.imports.bumblebeeNvidiaUtil;
@@ -68,6 +69,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         };
         this._initDriveUtility();
         this._initGpuUtility();
+        this._initLiquidctlUtility();
 
         let temperatureIcon = Gio.icon_new_for_string(Me.path + '/icons/material-icons/material-temperature-symbolic.svg');
         this._sensorIcons = {
@@ -106,6 +108,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._addSettingChangedSignal('show-voltage', this._querySensors.bind(this));
         this._addSettingChangedSignal('drive-utility', this._driveUtilityChanged.bind(this));
         this._addSettingChangedSignal('gpu-utility', this._gpuUtilityChanged.bind(this));
+        this._addSettingChangedSignal('show-liquidctl', this._liquidctlUtilityChanged.bind(this));
         this._addSettingChangedSignal('position-in-panel', this._positionInPanelChanged.bind(this));
         this._addSettingChangedSignal('panel-box-index', this._positionInPanelChanged.bind(this));
         this._addSettingChangedSignal('group-temperature', this._querySensors.bind(this))
@@ -247,6 +250,24 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._querySensors();
     }
 
+    _initLiquidctlUtility() {
+        if (this._settings.get_boolean('show-liquidctl'))
+            this._utils.liquidctl = new liquidctlUtil.LiquidctlUtil();
+    }
+
+    _destroyLiquidctlUtility() {
+        if (this._utils.liquidctl) {
+            this._utils.liquidctl.destroy();
+            delete this._utils.liquidctl;
+        }
+    }
+
+    _liquidctlUtilityChanged() {
+        this._destroyLiquidctlUtility();
+        this._initLiquidctlUtility();
+        this._querySensors();
+    }
+
     _updateTimeChanged(){
         Mainloop.source_remove(this._timeoutId);
         this._addTimer();
@@ -267,6 +288,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
     _onButtonDestroy(){
         this._destroyDriveUtility();
         this._destroyGpuUtility();
+        this._destroyLiquidctlUtility();
         Mainloop.source_remove(this._timeoutId);
         Mainloop.source_remove(this._updateUITimeoutId);
 
@@ -339,6 +361,12 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         let driveTempInfo = [];
         if(this._utils.disks && this._utils.disks.available) {
             driveTempInfo = this._utils.disks.temp;
+        }
+
+        if (this._utils.liquidctl && this._utils.liquidctl.available) {
+            sensorsTempInfo = sensorsTempInfo.concat(this._utils.liquidctl.temp);
+            fanInfo = fanInfo.concat(this._utils.liquidctl.rpm);
+            voltageInfo = voltageInfo.concat(this._utils.liquidctl.volt);
         }
 
         sensorsTempInfo.sort(function(a,b) { return a.label.localeCompare(b.label) });
