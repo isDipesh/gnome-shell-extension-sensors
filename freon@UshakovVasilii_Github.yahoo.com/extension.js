@@ -365,8 +365,10 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
 
         if (this._utils.liquidctl && this._utils.liquidctl.available) {
             sensorsTempInfo = sensorsTempInfo.concat(this._utils.liquidctl.temp);
-            fanInfo = fanInfo.concat(this._utils.liquidctl.rpm);
-            voltageInfo = voltageInfo.concat(this._utils.liquidctl.volt);
+            if (this._settings.get_boolean('show-fan-rpm'))
+                fanInfo = fanInfo.concat(this._utils.liquidctl.rpm);
+            if (this._settings.get_boolean('show-voltage'))
+                voltageInfo = voltageInfo.concat(this._utils.liquidctl.volt);
         }
 
         sensorsTempInfo.sort(function(a,b) { return a.label.localeCompare(b.label) });
