@@ -385,9 +385,9 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
             for (let i of tempInfo){
                 if(i.temp !== null && i.temp >= 0){
                     total++;
-    	            sum += i.temp;
-    	            if (i.temp > max)
-    	                max = i.temp;
+                    sum += i.temp;
+                    if (i.temp > max)
+                        max = i.temp;
                 }
             }
 
@@ -613,13 +613,13 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
                     if(!temperatureGroup) {
                         temperatureGroup = new PopupMenu.PopupSubMenuMenuItem(_('Temperature Sensors'), true);
                         temperatureGroup.icon.gicon = this._sensorIcons['temperature'];
-			if(!temperatureGroup.status) { // gnome 3.18 and hight
+                        if(!temperatureGroup.status) { // gnome 3.18 and hight
                             temperatureGroup.status = new St.Label({
-				     style_class: 'popup-status-menu-item',
+                                     style_class: 'popup-status-menu-item',
                                      y_expand: true,
                                      y_align: Clutter.ActorAlign.CENTER });
                             temperatureGroup.actor.insert_child_at_index(temperatureGroup.status, 4);
-			}
+                        }
                         this.menu.addMenuItem(temperatureGroup);
                     }
                     temperatureGroup.menu.addMenuItem(item);
@@ -654,7 +654,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
             format = '%.0f';
         }
         format += '%s';
-        
+
         if(this._settings.get_boolean('show-degrees-on-panel')){
             return format.format(value, (this._settings.get_string('unit')=='fahrenheit') ? "\u00b0F" : "\u00b0C" );
         } else {

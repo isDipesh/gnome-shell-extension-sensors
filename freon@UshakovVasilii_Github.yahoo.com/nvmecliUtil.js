@@ -14,7 +14,7 @@ var nvmecliUtil  = class {
             this._nvmeDevices = getNvmeData("list")["Devices"]
         } catch (e) {
             global.log('[FREON] Unable to find nvme devices: ' + e);
-        }        
+        }
         this._updated = true;
     }
 
@@ -34,8 +34,8 @@ var nvmecliUtil  = class {
         let sensors = [];
         for (let device of this._nvmeDevices) {
             var smart_log = getNvmeData(`smart-log ${device["DevicePath"]}`);
-	    if( smart_log.hasOwnProperty('temperature_sensor_2') ){
-	        sensors.push({ label: device["ModelNumber"] + " S1",
+            if( smart_log.hasOwnProperty('temperature_sensor_2') ){
+                sensors.push({ label: device["ModelNumber"] + " S1",
                                temp: parseFloat(smart_log.temperature_sensor_1) - 273.15 });
                 sensors.push({ label: device["ModelNumber"] + " S2",
                                temp: parseFloat(smart_log.temperature_sensor_2) - 273.15 });

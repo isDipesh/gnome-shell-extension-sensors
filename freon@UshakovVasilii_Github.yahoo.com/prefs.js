@@ -51,10 +51,10 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
         let panelBoxIndex = Gtk.SpinButton.new_with_range (-1, 20, 1);
         this.attach(panelBoxIndex, 2, i, 1, 1);
         this._settings.bind('panel-box-index', panelBoxIndex, 'value', Gio.SettingsBindFlags.DEFAULT);
-            
+
         this._addSwitch({key : 'show-degrees-on-panel', y : i++, x : 3,
             label : _('Show \u00b0C/\u00b0F on Panel')});
-            
+
         this._addSwitch({key : 'show-icon-on-panel', y : i++, x : 3,
             label : _('Show Icon on Panel')});
 
@@ -73,7 +73,7 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
             help : _("Works if you have more than three voltage sensors")});
 
         this._addComboBox({
-            items : {none : 'None', hddtemp : 'Hddtemp', udisks2 : 'UDisks2', smartctl : 'smartctl', nvmecli : 'nvme-cli'},
+            items : {none : _('None'), hddtemp : 'Hddtemp', udisks2 : 'UDisks2', smartctl : 'smartctl', nvmecli : 'nvme-cli'},
             key: 'drive-utility', y : i, x : 0,
             label: _('HDD/SSD Temperature Utility')
         });
@@ -119,7 +119,7 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
         }
 
         combobox.set_active(Object.keys(params.items).indexOf(this._settings.get_string(params.key)));
-        
+
         combobox.connect('changed', (entry) => {
             let [success, iter] = combobox.get_active_iter();
             if (!success)
@@ -130,7 +130,6 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
         this.attach(new Gtk.Label({ label: params.label, halign : Gtk.Align.END}), params.x, params.y, 1, 1);
         this.attach(combobox, params.x + 1, params.y, 1, 1);
     }
-
 });
 
 function buildPrefsWidget() {
