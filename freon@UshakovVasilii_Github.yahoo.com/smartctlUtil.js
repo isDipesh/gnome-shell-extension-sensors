@@ -7,7 +7,7 @@ function getSmartData (argv){
     return JSON.parse(ByteArray.toString( GLib.spawn_command_line_sync(`'${smartctl}' ${argv} -j`)[1] ))
 }
 
-var SmartctlUtil  = class {
+var smartctlUtil  = class {
     constructor(callback) {
         this._smartDevices = [];
         try {

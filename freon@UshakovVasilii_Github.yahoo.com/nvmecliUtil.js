@@ -7,7 +7,7 @@ function getNvmeData (argv){
     return JSON.parse(GLib.spawn_command_line_sync(`${nvme} ${argv} -o json`)[1].toString())
 }
 
-var NvmecliUtil  = class {
+var nvmecliUtil  = class {
     constructor(callback) {
         this._nvmeDevices = [];
         try {
