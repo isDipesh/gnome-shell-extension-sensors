@@ -63,6 +63,18 @@
       <description>Utility for detect video card temperature ('none', 'nvidia-settings' or 'aticonfig')</description>
     </key>
 
+    <key type="s" name="ipmi-utility">
+      <default>'none'</default>
+      <summary>Utility for reading IPMI sensors</summary>
+      <description>Utility reading IPMI sensors ('none', 'freeipmi')</description>
+    </key>
+
+    <key type="s" name="method-ipmi-utility">
+      <default>'direct'</default>
+      <summary>Method to run IPMI utility</summary>
+      <description>Method to run IPMI utility</description>
+    </key>
+
     <key type="b" name="show-liquidctl">
       <default>false</default>
       <summary>Show liquidctl sensors</summary>

@@ -20,6 +20,7 @@ const liquidctlUtil = Me.imports.liquidctlUtil;
 const smartctlUtil = Me.imports.smartctlUtil;
 const nvmecliUtil = Me.imports.nvmecliUtil;
 const BumblebeeNvidiaUtil = Me.imports.bumblebeeNvidiaUtil;
+const FreeipmiUtil = Me.imports.freeipmiUtil;
 const FreonItem = Me.imports.freonItem;
 
 const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
@@ -67,8 +68,10 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._utils = {
             sensors: new SensorsUtil.SensorsUtil()
         };
+
         this._initDriveUtility();
         this._initGpuUtility();
+        this._initIpmiUtility();
         this._initLiquidctlUtility();
 
         let temperatureIcon = Gio.icon_new_for_string(Me.path + '/icons/material-icons/material-temperature-symbolic.svg');
@@ -108,6 +111,8 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._addSettingChangedSignal('show-voltage', this._querySensors.bind(this));
         this._addSettingChangedSignal('drive-utility', this._driveUtilityChanged.bind(this));
         this._addSettingChangedSignal('gpu-utility', this._gpuUtilityChanged.bind(this));
+        this._addSettingChangedSignal('ipmi-utility', this._ipmiUtilityChanged.bind(this));
+        this._addSettingChangedSignal('method-ipmi-utility', this._ipmiUtilityChanged.bind(this));
         this._addSettingChangedSignal('show-liquidctl', this._liquidctlUtilityChanged.bind(this));
         this._addSettingChangedSignal('position-in-panel', this._positionInPanelChanged.bind(this));
         this._addSettingChangedSignal('panel-box-index', this._positionInPanelChanged.bind(this));
@@ -250,6 +255,27 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         this._querySensors();
     }
 
+    _initIpmiUtility(){
+        switch(this._settings.get_string('ipmi-utility')){
+            case 'freeipmi':
+                this._utils.ipmi = new FreeipmiUtil.FreeipmiUtil();
+                break;
+        }
+    }
+
+    _destroyIpmiUtility(){
+        if(this._utils.ipmi){
+            this._utils.ipmi.destroy();
+            delete this._utils.ipmi;
+        }
+    }
+
+    _ipmiUtilityChanged(){
+        this._destroyIpmiUtility();
+        this._initIpmiUtility();
+        this._querySensors();
+    }
+
     _initLiquidctlUtility() {
         if (this._settings.get_boolean('show-liquidctl'))
             this._utils.liquidctl = new liquidctlUtil.LiquidctlUtil();
@@ -288,6 +314,7 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
     _onButtonDestroy(){
         this._destroyDriveUtility();
         this._destroyGpuUtility();
+        this._destroyIpmiUtility();
         this._destroyLiquidctlUtility();
         Mainloop.source_remove(this._timeoutId);
         Mainloop.source_remove(this._updateUITimeoutId);
@@ -343,12 +370,11 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
     }
 
     _updateDisplay(){
-        let gpuTempInfo = this._utils.sensors.gpu;
+        let sensorsTempInfo = this._utils.sensors.temp;
 
+        let gpuTempInfo = this._utils.sensors.gpu;
         if (this._utils.gpu && this._utils.gpu.available)
             gpuTempInfo = gpuTempInfo.concat(this._utils.gpu.temp);
-
-        let sensorsTempInfo = this._utils.sensors.temp;
 
         let fanInfo = [];
         if (this._settings.get_boolean('show-fan-rpm'))
@@ -361,6 +387,14 @@ const FreonMenuButton = GObject.registerClass(class Freon_FreonMenuButton extend
         let driveTempInfo = this._utils.sensors.disks;
         if(this._utils.disks && this._utils.disks.available) {
             driveTempInfo = driveTempInfo.concat(this._utils.disks.temp);
+        }
+
+        if (this._utils.ipmi && this._utils.ipmi.available) {
+            sensorsTempInfo = sensorsTempInfo.concat(this._utils.ipmi.temp);
+            if (this._settings.get_boolean('show-fan-rpm'))
+                fanInfo = fanInfo.concat(this._utils.ipmi.rpm);
+            if (this._settings.get_boolean('show-voltage'))
+                voltageInfo = voltageInfo.concat(this._utils.ipmi.volt);
         }
 
         if (this._utils.liquidctl && this._utils.liquidctl.available) {

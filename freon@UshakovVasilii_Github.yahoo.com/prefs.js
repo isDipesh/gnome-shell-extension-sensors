@@ -88,9 +88,26 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
             label: _('Video Card Temperature Utility')
         });
 
+        this._addComboBox({
+            items : {
+                'none' : _('None'),
+                'freeipmi' : _('FreeIPMI') },
+            key: 'ipmi-utility', y : i, x : 0,
+            label: _('IPMI Sensors Utility')
+        });
+
+        this._addComboBox({
+            items : {
+                'direct' : 'Direct',
+                'sudo' : 'sudo' },
+            key: 'method-ipmi-utility', y : i, x : 1,
+            label: ''
+        });
+
         this._addSwitch({key : 'show-liquidctl', y : i++, x : 3,
             label : _('Show liquidctl Sensors'),
             help : _('Show data from liquidctl v1.7.0 or later')});
+
     }
 
     _addSwitch(params){
