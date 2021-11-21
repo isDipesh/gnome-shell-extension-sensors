@@ -14,7 +14,7 @@ var FreeipmiUtil = class extends CommandLineUtil.CommandLineUtil {
         if (this._argv) {
             const ExtensionUtils = imports.misc.extensionUtils;
             const Me = ExtensionUtils.getCurrentExtension();
-            if (ExtensionUtils.getSettings().get_string('method-ipmi-utility') === 'sudo')
+            if (ExtensionUtils.getSettings().get_string('exec-method-freeipmi') === 'sudo')
             {
                 const sudo_path = GLib.find_program_in_path('sudo');
                 // --non-interactive: do not ask for password, return if no permission.
