@@ -1,4 +1,4 @@
-const Gio = imports.gi.Gio;
+import Gio from 'gi://Gio';
 
 const UDisksDriveProxy = Gio.DBusProxy.makeProxyWrapper(
 '<node> \
@@ -30,7 +30,7 @@ const Async = {
 }
 
 // routines for handling of udisks2
-var UDisks2  = class {
+export default class UDisks2 {
 
     constructor(callback) {
         this._udisksProxies = [];
