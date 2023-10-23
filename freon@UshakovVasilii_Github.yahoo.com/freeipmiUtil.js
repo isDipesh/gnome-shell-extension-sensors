@@ -1,6 +1,7 @@
 import GLib from 'gi://GLib';
 
 import CommandLineUtil from './commandLineUtil.js';
+import PkexecUtil from './pkexecUtil.js';
 
 export default class FreeipmiUtil extends CommandLineUtil {
 
@@ -13,6 +14,10 @@ export default class FreeipmiUtil extends CommandLineUtil {
 
         if (this._argv && exec_method === 'pkexec')
         {
+            let pkexecUtil = new PkexecUtil('ipmi-sensors');
+            if (!pkexecUtil.checkOrInstall()) {
+                throw 'cannot run ipmi-sensors with pkexec';
+            }
             const pkexec_path = GLib.find_program_in_path('pkexec');
             this._argv = pkexec_path ? [pkexec_path].concat(this._argv) : null;
         }
