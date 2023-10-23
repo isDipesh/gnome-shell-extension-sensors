@@ -11,7 +11,7 @@ export default class FreeipmiUtil extends CommandLineUtil {
         // --comma-separated-output: pseudo csv output format, splitting on comma may be good enough for the values we read.
         this._argv = path ? [path, '--comma-separated-output'] : null;
 
-        if (this._argv && exec_method === 'sudo')
+        if (this._argv && exec_method === 'pkexec')
         {
             const pkexec_path = GLib.find_program_in_path('pkexec');
             this._argv = pkexec_path ? [pkexec_path].concat(this._argv) : null;

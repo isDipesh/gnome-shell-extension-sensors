@@ -93,7 +93,7 @@ var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget ex
         this._addComboBox({
             items : {
                 'direct' : _('Direct'),
-                'sudo' : 'sudo' },
+                'pkexec' : 'pkexec' },
             key: 'exec-method-freeipmi', y : i++, x : j + 1,
             label: ''
         });
