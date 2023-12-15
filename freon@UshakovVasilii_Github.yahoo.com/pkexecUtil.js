@@ -9,15 +9,17 @@ export default class PkexecUtil {
         this._pkexec = GLib.find_program_in_path('pkexec');
         // Currently hardcoded in policy file.
         this._bin = '/usr/sbin/' + name;
-		this._dir = this.dir();
+        this._dir = this.dir();
     }
 
     dir() {
         let uri = (new Error()).stack.split('\n')[1];
-        if (!uri.startsWith('install@file://')) {
+        let prefix = this.constructor.name + '@file://'
+        if (!uri.startsWith(prefix)) {
+            log('[FREON] failed to guess extension directory');
             return null;
         }
-        return Gio.File.new_for_path(uri.substring(15)).get_parent().get_path();
+        return Gio.File.new_for_path(uri.substring(prefix.length)).get_parent().get_path();
     }
 
     available_pkexec() {
@@ -37,6 +39,11 @@ export default class PkexecUtil {
     }
 
     install() {
+        if (!this._dir)
+        {
+            log('[FREON] cannot find ' + this._name + ' pkexec policy file ' + this._policy);
+            return false;
+        }
         try {
             this.run('install "' + this._dir + '/policies/' + this._policy + '" ' + this._actions);
         } catch(e) {}
