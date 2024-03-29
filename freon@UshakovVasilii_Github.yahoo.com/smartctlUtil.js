@@ -39,6 +39,10 @@ export default class SmartctlUtil {
             if (attributes["smartctl"]["exit_status"] != 0)
                 return null;
 
+            if(!attributes.temperature) {
+              return null;
+            }
+
             return {
                 label: info["model_name"],
                 temp: parseFloat(attributes.temperature.current)
