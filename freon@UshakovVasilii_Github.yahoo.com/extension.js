@@ -23,6 +23,7 @@ import Udisks2Util from './udisks2.js';
 import HddtempUtil from './hddtempUtil.js';
 import SmartctlUtil from './smartctlUtil.js';
 import NvmecliUtil from './nvmecliUtil.js';
+import BatteryUtil from './batteryUtil.js';
 
 import FreonItem from './freonItem.js';
 
@@ -76,6 +77,7 @@ class FreonMenuButton extends PanelMenu.Button {
         this._initSensorsUtility();
         this._initFreeipmiUtility();
         this._initLiquidctlUtility();
+        this._initBatteryUtility();
 
         this._initNvidiaUtility();
         this._initBumblebeeNvidiaUtility();
@@ -88,6 +90,7 @@ class FreonMenuButton extends PanelMenu.Button {
 
         let temperatureIcon = Gio.icon_new_for_string(path + '/icons/material-icons/material-temperature-symbolic.svg');
         let voltageIcon = Gio.icon_new_for_string(path + '/icons/freon-voltage-symbolic.svg');
+        let batteryIcon = Gio.icon_new_for_string(path + '/icons/freon-battery-symbolic.svg');
 
         this._sensorIcons = {
             'temperature' : temperatureIcon,
@@ -98,6 +101,7 @@ class FreonMenuButton extends PanelMenu.Button {
             'voltage' : voltageIcon,
             'fan' : Gio.icon_new_for_string(path + '/icons/freon-fan-symbolic.svg'),
             'power' : voltageIcon,
+            'battery' : batteryIcon,
         }
 
         this._menuLayout = new St.BoxLayout();
@@ -136,9 +140,9 @@ class FreonMenuButton extends PanelMenu.Button {
         this._addSettingChangedSignal('show-decimal-value', this._querySensors.bind(this));
 
         this._addSettingChangedSignal('use-generic-lmsensors', this._sensorsUtilityChanged.bind(this));
-        this._addSettingChangedSignal('use-generic-freeipmi', this._freeipmiUtilityChanged.bind(this));
-        this._addSettingChangedSignal('exec-method-freeipmi', this._freeipmiUtilityChanged.bind(this));
+        this._addSettingChangedSignal('freeimpi-selected', this._freeipmiUtilityChanged.bind(this));
         this._addSettingChangedSignal('use-generic-liquidctl', this._liquidctlUtilityChanged.bind(this));
+        this._addSettingChangedSignal('show-battery-stats', this._batteryUtilityChanged.bind(this));
 
         this._addSettingChangedSignal('use-gpu-nvidia', this._nvidiaUtilityChanged.bind(this));
         this._addSettingChangedSignal('use-gpu-nvidiabumblebee', this._nvidiabumblebeeUtilityChanged.bind(this));
@@ -153,6 +157,7 @@ class FreonMenuButton extends PanelMenu.Button {
         this._addSettingChangedSignal('show-rotationrate', this._rerender.bind(this));
         this._addSettingChangedSignal('show-voltage', this._rerender.bind(this));
         this._addSettingChangedSignal('show-power', this._rerender.bind(this));
+        
 
         this._addSettingChangedSignal('group-temperature', this._rerender.bind(this))
         this._addSettingChangedSignal('group-rotationrate', this._rerender.bind(this))
@@ -213,9 +218,21 @@ class FreonMenuButton extends PanelMenu.Button {
             right: Main.panel._rightBox
         };
 
-        let p = this.positionInPanel;
         let i = this._settings.get_int('panel-box-index');
-        boxes[p].insert_child_at_index(this.container, i);
+        let p = this._settings.get_int('position-in-panel');
+
+        console.debug(p)
+
+        switch (p) {
+            case 0:
+                boxes['left'].insert_child_at_index(this.container, i); break;
+            case 1:
+                boxes['center'].insert_child_at_index(this.container, i); break;
+            case 2:
+            default:
+                boxes['right'].insert_child_at_index(this.container, i); break;
+        }
+        //boxes[p].insert_child_at_index(this.container, i);
     }
 
     _showIconOnPanelChanged(){
@@ -258,14 +275,16 @@ class FreonMenuButton extends PanelMenu.Button {
     }
 
     _initFreeipmiUtility() {
-        if (this._settings.get_boolean('use-generic-freeipmi'))
-        {
-            let exec_method = this._settings.get_string('exec-method-freeipmi');
+        let exec_method = this._settings.get_int('freeimpi-selected');
+        if (exec_method != 0) {
             try {
-                this._utils.freeipmi = new FreeipmiUtil(exec_method);
+                if (exec_method == 1)
+                    this._utils.freeipmi = new FreeipmiUtil("direct");
+                else if (exec_method == 2)
+                    this._utils.freeipmi = new FreeipmiUtil("pkexec");
             } catch (e) {
-                if (exec_method != 'direct') {
-                    this._settings.set_string('exec-method-freeipmi', 'direct');
+                if (exec_method == 2) {
+                    this._settings.set_int('freeimpi-selected', 1);
                     this._freeipmiUtilityChanged();
                 }
             }
@@ -301,6 +320,25 @@ class FreonMenuButton extends PanelMenu.Button {
     _liquidctlUtilityChanged() {
         this._destroyLiquidctlUtility();
         this._initLiquidctlUtility();
+        this._querySensors();
+        this._updateUI(true);
+    }
+
+    _initBatteryUtility() {
+        if (this._settings.get_boolean("show-battery-stats"))
+            this._utils.battery = new BatteryUtil();
+    }
+
+    _destroyBatteryUtility() {
+        if (this._utils.battery) {
+            this._utils.battery.destroy();
+            delete this._utils.battery;
+        }
+    }
+
+    _batteryUtilityChanged() {
+        this._destroyBatteryUtility();
+        this._initBatteryUtility();
         this._querySensors();
         this._updateUI(true);
     }
@@ -471,6 +509,8 @@ class FreonMenuButton extends PanelMenu.Button {
         this._destroySmartctlUtility();
         this._destroyNvmecliUtility();
 
+        this._destroyBatteryUtility();
+
         GLib.Source.remove(this._timeoutId);
         GLib.Source.remove(this._updateUITimeoutId);
 
@@ -549,8 +589,10 @@ class FreonMenuButton extends PanelMenu.Button {
                 fanInfo = fanInfo.concat(this._utils.sensors.rpm);
             if (this._settings.get_boolean('show-voltage'))
                 voltageInfo = voltageInfo.concat(this._utils.sensors.volt);
-            if (this._settings.get_boolean('show-power'))
+            if (this._settings.get_boolean('show-power')) {
                 powerInfo = powerInfo.concat(this._utils.sensors.power);
+            }
+                
         }
 
         if (this._utils.freeipmi && this._utils.freeipmi.available) {
@@ -569,6 +611,12 @@ class FreonMenuButton extends PanelMenu.Button {
                 fanInfo = fanInfo.concat(this._utils.liquidctl.rpm);
             if (this._settings.get_boolean('show-voltage'))
                 voltageInfo = voltageInfo.concat(this._utils.liquidctl.volt);
+        }
+
+        if (this._utils.battery && this._utils.battery.available) {
+            if (this._settings.get_boolean('show-battery-stats')) {
+                powerInfo = powerInfo.concat(this._utils.battery.power)
+            }
         }
 
         if (this._utils.nvidia && this._utils.nvidia.available)
@@ -733,9 +781,12 @@ class FreonMenuButton extends PanelMenu.Button {
 
             for (let power of powerInfo){
                 const unit = this._settings.get_boolean('show-power-unit') ? _('W'): '';
-
+                let _icon = 'power';
+                if (power.label.startsWith("BAT")) {
+                    _icon = 'battery';
+                }
                 sensors.push({
-                    icon: 'power',
+                    icon: _icon,
                     type: 'power',
                     label: power.label,
                     value: _("%s%.2f%s").format(((power.power >= 0) ? '+' : ''),
@@ -959,27 +1010,32 @@ class FreonMenuButton extends PanelMenu.Button {
     }
 
     _formatTemp(value) {
-        if(value === null)
+        let unit_type = this._settings.get_int('unit');
+        let show_unit = this._settings.get_boolean('show-temperature-unit');
+
+        if(value === null) {
             return 'N/A';
-        if (this._settings.get_string('unit')=='fahrenheit'){
-            value = this._toFahrenheit(value);
         }
+
         let format = '%.1f';
         if (!this._settings.get_boolean('show-decimal-value')){
             format = '%.0f';
         }
-        format += '%s';
 
-        if(this._settings.get_boolean('show-temperature-unit')){
-            return format.format(value, (this._settings.get_string('unit')=='fahrenheit') ? "\u00b0F" : "\u00b0C" );
-        } else {
-            return format.format(value, "");
+        if (unit_type == 1) {
+            value = this._toFahrenheit(value);
         }
+
+        if (show_unit) {
+            if (unit_type == 0) {
+                format += "\u00b0C";
+            } else if (unit_type == 1) {
+                format += "\u00b0F";
+            }
+        } 
+        return format.format(value);
     }
 
-    get positionInPanel(){
-        return this._settings.get_string('position-in-panel');
-    }
 }
 
 export default class extends Extension {

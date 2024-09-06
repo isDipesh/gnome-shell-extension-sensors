@@ -15,10 +15,10 @@
       <description>This is the seconds after CPU temperature extension updates the data from the system</description>
     </key>
 
-    <key type="s" name="position-in-panel">
-      <default>'right'</default>
+    <key type="i" name="position-in-panel">
+      <default>2</default>
       <summary>Position in Panel</summary>
-      <description>Position in Panel ('left', 'center', 'right')</description>
+      <description>Position in Panel ('Left', 'Center', 'Right')</description>
     </key>
 
     <key name="panel-box-index" type="i">
@@ -33,22 +33,22 @@
       <description>Show sensor icon on top panel</description>
     </key>
 
-    <key type="b" name="show-temperature">
-      <default>true</default>
-      <summary>Display Temperature</summary>
-      <description>Display temperature</description>
-    </key>
-
-    <key type="s" name="unit">
-      <default>'centigrade'</default>
-      <summary>Unit</summary>
-      <description>The unit ('centigrade' or 'fahrenheit') the extension should display the temperature in</description>
+    <key type="i" name="unit">
+      <default>0</default>
+      <summary>Select centigrade or fahrenheit</summary>
+      <description>Choose wether to display the Number for centigrade or fahrenheit</description>
     </key>
 
     <key type="b" name="show-temperature-unit">
       <default>true</default>
-      <summary>Show degrees celsius/fahrenheit on Panel</summary>
-      <description>Show degrees celsius/fahrenheit on Panel</description>
+      <summary>Enable the display of Temperature Unit on Panel</summary>
+      <description>Enable the display of Temperature Unit on Panel</description>
+    </key>
+
+    <key type="b" name="show-temperature">
+      <default>true</default>
+      <summary>Show RPM on Panel</summary>
+      <description>Show RPM on Panel</description>
     </key>
 
     <key type="b" name="show-rotationrate-unit">
@@ -87,14 +87,14 @@
       <description>Read sensors from lm-sensors</description>
     </key>
 
-    <key type="b" name="use-generic-freeipmi">
-      <default>false</default>
-      <summary>Read sensors using ipmi-sensors from FreeIPMI</summary>
-      <description>Read sensors using ipmi-sensors from FreeIPMI</description>
+    <key type="i" name="freeimpi-selected">
+      <default>0</default>
+      <summary>Selected element number in the FreeIMPI-Dropdown</summary>
+      <description>Selected element number in the FreeIMPI-Dropdown</description>
     </key>
 
     <key type="s" name="exec-method-freeipmi">
-      <default>'direct'</default>
+      <default>'Disabled'</default>
       <summary>Method to run FreeIPMI utility</summary>
       <description>Method to run FreeIPMI utility</description>
     </key>
@@ -157,6 +157,12 @@
       <default>true</default>
       <summary>Display voltage</summary>
       <description>Display voltage of various components</description>
+    </key>
+    
+    <key type="b" name="show-battery-stats">
+      <default>true</default>
+      <summary>Show battery statistics</summary>
+      <description>If a battery is available, battery stats will be retrieved</description>
     </key>
 
     <key type="b" name="group-temperature">

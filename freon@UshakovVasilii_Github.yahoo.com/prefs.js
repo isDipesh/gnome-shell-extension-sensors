@@ -1,230 +1,188 @@
-import Gio from 'gi://Gio';
-import GObject from 'gi://GObject';
-import Gtk from 'gi://Gtk?version=4.0';
+import Gio from 'gi://Gio'
+import Gtk from 'gi://Gtk'
+import Adw from 'gi://Adw'
 
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const modelColumn = {
-    label: 0,
-    separator: 1
-}
 
-var FreonPrefsWidget = new GObject.registerClass(class Freon_FreonPrefsWidget extends Gtk.Grid {
+export default class FreonPreferences extends ExtensionPreferences {
 
-    constructor(settings) {
-        super();
-        this.margin = this.row_spacing = this.column_spacing = 20;
+    fillPreferencesWindow(window) {
+        window.set_default_size(1010, 800);
 
-        this._settings = settings;
-
-        let i = 0;
-        let j = 0;
-
-        this._addLabel({
-            label: _('Display Options'),
-            y : i++, x : j
+        const grid = new Gtk.Grid({
+            column_homogeneous: true,
+            column_spacing: 10,
+            row_homogeneous: false,
         });
 
-        this._addLabel({
-            label: _('Poll Sensors Every (sec)'),
-            y : i, x : j
+        this._settings = this.getSettings()
+        const page = new Adw.PreferencesPage({
+            title: _('General'),
+            icon_name: 'dialog-information-symbolic',
+
         });
+        
+        const display_options = this._create_display_options();
+        const generic_sensor_providers = this._create_generic_sensor_providers();
+        const gpu_sensor_providers = this._create_gpu_sensor_providers();
+        const drive_sensor_providers = this._create_drive_sensor_providers();
+        const show_sensors = this._create_show_sensors();
+        const item_group = this._create_item_grouping();
 
-        let updateTime = Gtk.SpinButton.new_with_range (1, 60, 1);
-        this.attach(updateTime, j + 1, i++, 1, 1);
-        this._settings.bind('update-time', updateTime, 'value', Gio.SettingsBindFlags.DEFAULT);
+        grid.attach(display_options,          0, 0, 1, 12);
+        grid.attach(generic_sensor_providers, 1, 0, 1, 4);
+        grid.attach(gpu_sensor_providers,     1, 4, 1, 4);
+        grid.attach(drive_sensor_providers,   1, 8, 1, 4);
+        grid.attach(show_sensors,             2, 0, 1, 6);
+        grid.attach(item_group,               2, 6, 1, 4);
 
-        this._addComboBox({
-            label: _('Position on Panel'),
-            items : {left : _('Left'), center : _('Center'), right : _('Right')},
-            key: 'position-in-panel', y : i++, x : j
-        });
+        const widget = new Adw.PreferencesGroup({
+            hexpand: true,
+            vexpand: true,
+        })
+        widget.add(grid);
 
-        this._addLabel({
-            label: _('Index on Panel'),
-            y : i, x : j
-        });
+        page.add(widget);
 
-        let panelBoxIndex = Gtk.SpinButton.new_with_range (-1, 20, 1);
-        this.attach(panelBoxIndex, j + 1, i++, 1, 1);
-        this._settings.bind('panel-box-index', panelBoxIndex, 'value', Gio.SettingsBindFlags.DEFAULT);
-
-        this._addSwitch({key : 'show-icon-on-panel', y : i++, x : j,
-            label : _('Show Icon on Panel')});
-
-        this._addComboBox({
-            label: _('Temperature Unit'),
-            items : {centigrade : _("\u00b0C"), fahrenheit : _("\u00b0F")},
-            key: 'unit', y : i++, x : j
-        });
-
-        this._addSwitch({key : 'show-temperature-unit', y : i++, x : j,
-            label : _('Show Temperature Unit')});
-
-        this._addSwitch({key : 'show-rotationrate-unit', y : i++, x : j,
-            label : _('Show Rotation Rate Unit')});
-
-        this._addSwitch({key : 'show-voltage-unit', y : i++, x : j,
-            label : _('Show Voltage Unit')});
-
-        this._addSwitch({key : 'show-power-unit', y : i++, x : j,
-            label : _('Show Power Unit')});
-
-        this._addSwitch({key : 'show-decimal-value', y : i++, x : j,
-            label : _('Show Decimal Values'),
-            help : _("Show additionnal digits after decimal point")});
-
-        i = 0;
-        j = 2;
-
-        this._addLabel({
-            label: _('Generic Sensor Providers'),
-            y : i++, x : j
-        });
-
-        this._addSwitch({key : 'use-generic-lmsensors', y : i++, x : j,
-            label : 'lm-sensors',
-            help : _('Read sensors from lm-sensors')});
-
-        this._addSwitch({key : 'use-generic-freeipmi', y : i, x : j,
-            label : 'FreeIPMI',
-            help : _('Read sensors using ipmi-sensors from FreeIPMI')});
-
-        this._addComboBox({
-            items : {
-                'direct' : _('Direct'),
-                'pkexec' : 'pkexec' },
-            key: 'exec-method-freeipmi', y : i++, x : j + 1,
-            label: ''
-        });
-
-        this._addSwitch({key : 'use-generic-liquidctl', y : i++, x : j,
-            label : 'liquidctl',
-            help : _('Read sensors from liquidctl (requires v1.7.0 or later)')});
-
-        this._addLabel({
-            label: _('GPU Sensor Providers'),
-            y : i++, x : j
-        });
-
-        this._addSwitch({key : 'use-gpu-nvidia', y : i++, x : j,
-            label : 'Nvidia'});
-
-        this._addSwitch({key : 'use-gpu-bumblebeenvidia', y : i++, x : j,
-            label : 'Bumblebee + Nvidia'});
-
-        this._addSwitch({key : 'use-gpu-aticonfig', y : i++, x : j,
-            label : 'Catalyst'});
-
-        this._addLabel({
-            label: _('Drive Sensor Providers'),
-            y : i++, x : j
-        });
-
-        this._addSwitch({key : 'use-drive-udisks2', y : i++, x : j,
-            label : 'Udisks2'});
-
-        this._addSwitch({key : 'use-drive-hddtemp', y : i++, x : j,
-            label : 'Hddtemp'});
-
-        this._addSwitch({key : 'use-drive-smartctl', y : i++, x : j,
-            label : 'smartctl',
-            help : _('Read drive sensors using smartctl from smartmontools')});
-
-        this._addSwitch({key : 'use-drive-nvmecli', y : i++, x : j,
-            label : 'nvme-cli'});
-
-        i = 0;
-        j = 5;
-
-        this._addLabel({
-            label: _('Show Sensors'),
-            y : i++, x : j
-        });
-
-        this._addSwitch({key : 'show-temperature', y : i++, x : j,
-            label : _('Temperature')});
-
-        this._addSwitch({key : 'show-rotationrate', y : i++, x : j,
-            label : _('Rotation Rate')});
-
-        this._addSwitch({key : 'show-voltage', y : i++, x : j,
-            label : _('Voltage')});
-
-        this._addSwitch({key : 'show-power', y : i++, x : j,
-            label : _('Power')});
-
-        this._addLabel({
-            label: _('Group Items'),
-            y : i++, x : j
-        });
-
-        this._addSwitch({key : 'group-temperature', y : i++, x : j,
-            label : _('Temperature'),
-            help : _("Group three or more temperature sensors")});
-
-        this._addSwitch({key : 'group-rotationrate', y : i++, x : j,
-            label : _('Rotation Rate'),
-            help : _("Group three or more rotation rate sensors")});
-
-        this._addSwitch({key : 'group-voltage', y : i++, x : j,
-            label : _('Voltage'),
-            help : _("Group three or more voltage sensors")});
-       }
-
-    _addLabel(params){
-        let lbl = new Gtk.Label({label: params.label,halign : Gtk.Align.END});
-        this.attach(lbl, params.x, params.y, 1, 1);
-
-        if(params.help){
-            lbl.set_tooltip_text(params.help);
-        }
+        window.add(page);
     }
 
-    _addSwitch(params){
-        this._addLabel(params);
 
-        let sw = new Gtk.Switch({halign : Gtk.Align.END, valign : Gtk.Align.CENTER});
-        this.attach(sw, params.x + 1, params.y, 1, 1);
+    _create_display_options() {
+        const group = new Adw.PreferencesGroup({
+            title: _('Display Options'),
+            width_request: 320,
+        })
+    
+        const sensor_poll_intervall = new Adw.SpinRow({
+            title: _('Sensor Polling Interval'),
+            adjustment: new Gtk.Adjustment({
+                lower: 1,
+                upper: 60,
+                value: 5,
+                step_increment: 1,
+            })
+        })
+        this._settings.bind('update-time', sensor_poll_intervall, 'value', Gio.SettingsBindFlags.DEFAULT)
+        group.add(sensor_poll_intervall)
 
-        if(params.help){
-            sw.set_tooltip_text(params.help);
-        }
+        const position_in_panel = new Adw.ComboRow({
+            title: _('Panel Position'),
+            model: new Gtk.StringList({strings: ["Left", "Center", "Right"] }),
+        })
+        this._settings.bind("position-in-panel", position_in_panel, "selected", Gio.SettingsBindFlags.NO_SENSETIVITY);
+        group.add(position_in_panel)
 
-        this._settings.bind(params.key, sw, 'active', Gio.SettingsBindFlags.DEFAULT);
+        
+        const index_on_panel = new Adw.SpinRow({
+            title: _('Index on Panel'),
+            adjustment: new Gtk.Adjustment({
+                lower: -1,
+                upper: 25,
+                value: 1,
+                step_increment: 1,
+            })
+        });
+        group.add(index_on_panel);
+        this._settings.bind('panel-box-index', index_on_panel, 'value', Gio.SettingsBindFlags.DEFAULT);
+
+        group.add(this._addSwitch("Show Icon on Panel", "show-icon-on-panel"));
+        
+        const unit_setting = new Adw.ComboRow({
+            title: _('Temperature Unit'),
+            model: new Gtk.StringList({strings: ["\u00b0C", "\u00b0F"]}),
+        });
+        this._settings.bind("unit", unit_setting, "selected", Gio.SettingsBindFlags.NO_SENSETIVITY);
+        group.add(unit_setting);
+
+        group.add(this._addSwitch("Show Temperature Unit", "show-temperature-unit"));
+        group.add(this._addSwitch("Show Rotation Rate Unit", "show-rotationrate-unit"));
+        group.add(this._addSwitch("Show Voltage Unit", "show-voltage-unit"));
+        group.add(this._addSwitch("Show Power Unit", "show-power-unit"));
+        group.add(this._addSwitch("Show Decimal Values", "show-decimal-value", "Show additionnal digits after decimal point"));
+        return group;
     }
 
-    _addComboBox(params){
-        let model = new Gtk.ListStore();
-        model.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING]);
-
-        let combobox = new Gtk.ComboBox({model: model});
-        let renderer = new Gtk.CellRendererText();
-        combobox.pack_start(renderer, true);
-        combobox.add_attribute(renderer, 'text', 1);
-
-        for(let k in params.items){
-            model.set(model.append(), [0, 1], [k, params.items[k]]);
-        }
-
-        combobox.set_active(Object.keys(params.items).indexOf(this._settings.get_string(params.key)));
-
-        combobox.connect('changed', (entry) => {
-            let [success, iter] = combobox.get_active_iter();
-            if (!success)
-                return;
-            this._settings.set_string(params.key, model.get_value(iter, 0))
+    _create_generic_sensor_providers() {
+        const group = new Adw.PreferencesGroup({
+            title: _('Generic Sensor Providers'),
+            width_request: 320,
         });
 
-        this._addLabel(params);
+        group.add(this._addSwitch("lm-sensors", "use-generic-lmsensors", "Read sensors from lm-sensors"));
+        group.add(this._addSwitch("liquidctl", "use-generic-liquidctl", "Read sensors from liquidctl (v1.7.0+)"));
 
-        this.attach(combobox, params.x + 1, params.y, 1, 1);
+        const freeimpi = new Adw.ComboRow({
+            title: _('FreeIMPI'),
+            model: new Gtk.StringList({strings: ["Disabled", "Direct", "pkexec"] }),
+            selected: this._settings.get_int("freeimpi-selected"),
+            subtitle: "Read sensors using ipmi-sensors from FreeIPMI"
+        });
+        this._settings.bind("freeimpi-selected", freeimpi, "selected", Gio.SettingsBindFlags.NO_SENSETIVITY);
+        group.add(freeimpi);
+
+        return group;
     }
-});
 
-export default class extends ExtensionPreferences {
+    _create_gpu_sensor_providers() {
+        const group = new Adw.PreferencesGroup({
+            title: _('GPU Sensor Providers'),
+            width_request: 320,
+        });
+        group.add(this._addSwitch("Nvidia", "use-gpu-nvidia"));
+        group.add(this._addSwitch("Bumblebee + Nvidia", "use-gpu-bumblebeenvidia"));
+        group.add(this._addSwitch("Catalyst", "use-gpu-aticonfig"));
 
-    getPreferencesWidget() {
-        return new FreonPrefsWidget(this.getSettings());
+        return group;
+    }
+
+    _create_drive_sensor_providers() {
+        const group = new Adw.PreferencesGroup({
+            title: _('Drive Sensor Providers'),
+            width_request: 320,
+        });
+        group.add(this._addSwitch("Udisks2", "use-drive-udisks2"));
+        group.add(this._addSwitch("Hddtemp", "use-drive-hddtemp"));
+        group.add(this._addSwitch("smartctl", "use-drive-smartctl", "Read drive sensors using smartctl from smartmontools"));
+        group.add(this._addSwitch("nvme-cli", "use-drive-nvmecli"));
+    
+        return group;
+    }
+
+    _create_show_sensors() {
+        const group = new Adw.PreferencesGroup({
+            title: _('Show Sensors'),
+            width_request: 320,
+        })
+    
+        group.add(this._addSwitch("Temperature", "show-temperature"));
+        group.add(this._addSwitch("Rotation Rate", "show-rotationrate"));
+        group.add(this._addSwitch("Voltage", "show-voltage"));
+        group.add(this._addSwitch("Power", "show-power"));
+        group.add(this._addSwitch("Battery", "show-battery-stats"));
+        return group
+    }
+
+    _create_item_grouping() {
+        const group = new Adw.PreferencesGroup({
+            title: _('Group Items'),
+            width_request: 320,
+            description: "Group three or more sensor of the same type",
+        })
+        group.add(this._addSwitch("Temperature", "group-temperature"));
+        group.add(this._addSwitch("Rotation Rate", "group-rotationrate"));
+        group.add(this._addSwitch("Voltage", "group-voltage"));
+        return group;
+    }
+
+    _addSwitch(title, key, help = "") {
+        const sw = new Adw.SwitchRow({
+            title: _(title),
+            active: this._settings.get_boolean(key),
+            subtitle: help
+        });
+        this._settings.bind(key, sw, 'active', Gio.SettingsBindFlags.DEFAULT);
+        return sw;
     }
 }
