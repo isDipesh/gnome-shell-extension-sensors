@@ -1,8 +1,8 @@
-This extensions isn't currently maintained. Please use the this fork: [https://extensions.gnome.org/extension/841/freon/](https://extensions.gnome.org/extension/841/freon/) ([https://github.com/UshakovVasilii/gnome-shell-extension-freon](https://github.com/UshakovVasilii/gnome-shell-extension-freon))
-
-
 gnome-shell-extension-sensors
 =============================
+
+This extensions isn't currently maintained. Please use the this fork: [https://extensions.gnome.org/extension/841/freon/](https://extensions.gnome.org/extension/841/freon/) ([https://github.com/UshakovVasilii/gnome-shell-extension-freon](https://github.com/UshakovVasilii/gnome-shell-extension-freon))
+
 *gnome-shell-extension-sensors* (previously known as gnome-shell-extension-cpu-temperature)
 is an extension for displaying CPU temperature, hard disk temperature, voltage and
 CPU fan RPM in GNOME Shell.
@@ -105,10 +105,10 @@ output consult the `sensors.conf`(5) manual.
 
 Authors : [authors]
 
-[sensors]: http://www.lm-sensors.org/
-[UDisks2]: http://www.freedesktop.org/wiki/Software/udisks/
+[sensors]: https://web.archive.org/web/20110312035654/http://www.lm-sensors.org/
+[UDisks2]: https://www.freedesktop.org/wiki/Software/udisks/
 [hddtemp]: https://savannah.nongnu.org/projects/hddtemp/
 [GNOME extensions]: https://extensions.gnome.org/extension/82/cpu-temperature-indicator/
-[authors]: https://github.com/xtranophilist/gnome-shell-extension-sensors/graphs/contributors
-[screenshot]: https://raw.github.com/wiki/xtranophilist/gnome-shell-extension-sensors/gnome-shell-extension-sensors.png
+[authors]: https://github.com/isDipesh/gnome-shell-extension-sensors/graphs/contributors
+[screenshot]: https://raw.github.com/wiki/isDipesh/gnome-shell-extension-sensors/gnome-shell-extension-sensors.png
 [RH#983409]: https://bugzilla.redhat.com/show_bug.cgi?id=983409
